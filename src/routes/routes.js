@@ -20,7 +20,6 @@ export const publicRoutes = [
     element: "NotFound",
     isPublic: true,
   },
-  
 ];
 
 // volunteer Routes
@@ -29,5 +28,10 @@ export const volunteerRoutes = [
     path: "/volunteer/Info",
     element: "Info",
     isPublic: true,
-  }
+  },
+  {
+    path: "/volunteer/evaluations/:id",
+    element: "EvaluationDetails",
+    isPublic: false,
+  },
 ];

@@ -1,58 +1,32 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import Cookies from "universal-cookie";
 import logo from "../assets/AfiaLogo.png";
 import { Icon } from "@iconify/react";
-
+import { motion as _motion } from "framer-motion";
 
 const Header = () => {
-  const {volunteer, logout } = useAuth();
-  const cookies = new Cookies();
+  const { volunteer, logout } = useAuth();
 
-  // const volunteer = cookies.get("volunteer", { path: "/" });
   const navigate = useNavigate();
-  const handleLogout = async () => {
-    try {
-      await logout();
-      cookies.remove("volunteer");
-      navigate("/");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
-  const volunteerLinks = [{ to: "volunteer/info", label: "معلومات المتطوع" }];
-
-  const renderNavLinks = () => {
-    if (!volunteer?.role) return null;
-
-    const links = volunteer?.role === "volunteer" && volunteerLinks;
-
-    return (
-      <div className="flex items-center space-x-3 rtl:space-x-reverse">
-        {links.map((link) => (
-          <Link
-            key={link.to}
-            to={link.to}
-            className="text-textColor hover:text-primary px-3 py-2 rounded-md "
-          >
-            {link.label}
-          </Link>
-        ))}
-      </div>
-    );
+  const navVariants = {
+    hidden: { opacity: 0, y: -10 },
+    visible: { opacity: 1, y: 0 },
   };
 
   return (
     <>
-      <nav className="sticky  w-full top-0 z-50  ">
+      <_motion.nav
+        className="sticky  w-full top-0 z-50  "
+        variants={navVariants}
+        initial="hidden"
+        animate="visible"
+        transition={{ duration: 0.45, ease: "easeOut" }}
+      >
         {/* top bar */}
         <div className=" bg-gray-100  ">
           <div className="p-2 ">
@@ -114,125 +88,99 @@ const Header = () => {
         <div className="bg-minColor text-textColor border  mx-auto px-4 sm:px-6 lg:px-8">
           <div className=" ">
             <div className="flex items-center justify-between h-16">
-              <div className="flex items-center">
+              <div className="flex items-center space-x-4 rtl:space-x-reverse">
                 {volunteer?.role ? (
-                  <div className="flex items-center space-x-4 rtl:space-x-reverse">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger>
-                        <Icon
-                          color="fc4c55"
-                          icon="si:user-fill"
-                          width="24"
-                          height="24"
-                        />
-                        {/* <Icon
-                        icon="icon-park-outline:earth"
-                        width="24"
-                        height="24"
-                      /> */}
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                          <div className="p-1 flex items-center gap-2 ">
-                            {renderNavLinks()}
-                            <Icon
-                              color="fc4c55"
-                              icon={
-                                "material-symbols-light:settings-heart-outline-rounded"
-                              }
-                              width={"30"}
-                              height={"30"}
-                            />
-                          </div>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <button
-                            onClick={handleLogout}
-                            className="p-1 flex items-center gap-2 w-full justify-between"
-                          >
-                            تسجيل خروج
-                            <Icon
-                              color="fc4c55"
-                              icon="solar:logout-broken"
-                              width={"30"}
-                            />
-                          </button>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                  <>
                     <span className="text-textColor hidden sm:block">
-                      مرحباً،{" "}
+                      مرحباً،
                       <span>{volunteer?.full_name || volunteer?.username}</span>
                     </span>
-                    <Link to="/" className="flex items-center">
+                    <_motion.button
+                      type="button"
+                      onClick={handleLogout}
+                      whileHover={{ scale: 1.03, y: -1 }}
+                      whileTap={{ scale: 0.97 }}
+                      className="flex items-center gap-2  py-2 rounded-md hover:bg-white/10 transition-colors"
+                    >
                       <Icon
                         color="fc4c55"
-                        icon="line-md:home-twotone"
-                        width="24"
-                        height="24"
-                        path="/"
+                        icon="solar:logout-broken"
+                        width={24}
+                        height={24}
                       />
-                    </Link>
-                    <Link to="/volunteer/info" className="flex items-center">
-                      <Icon
-                        color="fc4c55"
-                        icon="solar:user-id-broken"
-                        width="24"
-                        height="24"
-                      />
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="flex items-center space-x-4 rtl:space-x-reverse">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger>
+                    </_motion.button>
+
+                    <_motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Link to="/volunteer/info" className="flex items-center">
                         <Icon
                           color="fc4c55"
-                          icon="si:user-fill"
+                          icon="solar:user-id-broken"
                           width="24"
                           height="24"
                         />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                          <Link
-                            to="/login"
-                            className="text-textColor hover:text-primary px-3 py-2 rounded-md text-sm font-medium"
-                          >
-                            تسجيل دخول المتطوع
-                          </Link>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    <Link to="/" className="flex items-center">
+                      </Link>
+                    </_motion.div>
+                  </>
+                ) : (
+                  <_motion.div
+                    whileHover={{ scale: 1.03, y: -1 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="rounded-md"
+                  >
+                    <Link
+                      to="/login"
+                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-white/10 transition-colors"
+                    >
                       <Icon
                         color="fc4c55"
-                        icon="line-md:home-twotone"
+                        icon="si:user-fill"
                         width="24"
                         height="24"
-                        path="/"
                       />
+                      <span className="hidden sm:inline text-textColor">
+                        تسجيل الدخول
+                      </span>
                     </Link>
-                  </div>
+                  </_motion.div>
                 )}
+                <_motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Link to="#" className="flex items-center">
+                    <Icon
+                      color="fc4c55"
+                      icon="line-md:home-twotone"
+                      width="24"
+                      height="24"
+                      path="#"
+                    />
+                  </Link>
+                </_motion.div>
               </div>
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <Link to="/" className="flex items-center">
-                    <img
-                      src={logo}
-                      alt="Afia Logo"
-                      className="h-[3.8rem]  w-auto mr-2"
-                    />
-                  </Link>
+                  <_motion.div
+                    whileHover={{ scale: 1.03 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Link to="/" className="flex items-center">
+                      <img
+                        src={logo}
+                        alt="Afia Logo"
+                        className="h-[5rem]  w-auto mr-2"
+                      />
+                    </Link>
+                  </_motion.div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </nav>
+      </_motion.nav>
     </>
   );
 };

@@ -1,12 +1,39 @@
-import React from "react";
+import React, { memo, useMemo } from "react";
 
-const VolunteerInfoCard = ({ title, children, className = "" }) => (
-  <div className={`bg-white rounded-xl shadow-md p-6 ${className}`}>
-    <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">
-      {title}
-    </h3>
-    <div className="space-y-3">{children}</div>
-  </div>
-);
+/**
+ * VolunteerInfoCard Component (Enhanced Version)
+ * - Cleaner structure and consistent styling
+ * - Memoized for performance
+ * - Allows flexible extension via props
+ * - No behavioral changes to original functionality
+ */
+
+const VolunteerInfoCard = memo(function VolunteerInfoCard({
+  title,
+  children,
+  className = "",
+  bordered = true, // Optional improvement
+  condensed = false, // Optional compact mode
+}) {
+  const containerClasses = useMemo(
+    () => `bg-white rounded-xl shadow-md ${condensed ? "p-4" : "p-6"} ${className}`,
+    [className, condensed]
+  );
+
+  const titleClasses = useMemo(
+    () =>
+      `text-xl font-semibold text-gray-800 mb-4 ${
+        bordered ? "border-b pb-2" : ""
+      }`,
+    [bordered]
+  );
+
+  return (
+    <div className={containerClasses}>
+      <h3 className={titleClasses}>{title}</h3>
+      <div className="space-y-3">{children}</div>
+    </div>
+  );
+});
 
 export default VolunteerInfoCard;

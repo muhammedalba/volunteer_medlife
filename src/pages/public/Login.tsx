@@ -3,9 +3,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import axios from "axios";
 import { useState } from "react";
+import { motion as _motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext.jsx";
-import { loginVolunteer } from '../../services/volunteerService.js';
+import { loginVolunteer } from "../../services/volunteerService.js";
+import { warnNotify, errorNotify, successNotify } from "../../utils/Toast";
 
 // تعريف مخطط التحقق من صحة البيانات
 const loginSchema = yup
@@ -27,6 +29,38 @@ export default function Login() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  const pageVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  const alertVariants = {
+    hidden: { opacity: 0, y: -8 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  const fieldsContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { delayChildren: 0.25, staggerChildren: 0.12 },
+    },
+  };
+
+  const fieldItemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.55 },
+    },
+  };
+
   const {
     register,
     handleSubmit,
@@ -43,14 +77,14 @@ export default function Login() {
 
     try {
       const responseData = await loginVolunteer(data);
-
-      // استدعاء دالة تسجيل الدخول من السياق
+      //
       const loginSuccess = await login(responseData);
 
       if (loginSuccess) {
         setSuccess("تم تسجيل الدخول بنجاح!");
+        successNotify("تم تسجيل الدخول بنجاح!");
         reset();
-        navigate("/volunteer/info"); // أو أي مسار آخر تريده بعد تسجيل الدخول
+        navigate("/volunteer/info");
       } else {
         setError("حدث خطأ أثناء تسجيل الدخول");
       }
@@ -59,7 +93,9 @@ export default function Login() {
         setError(
           err.response.data.message || "اسم المستخدم أو كلمة المرور غير صحيحة"
         );
+        errorNotify(err.response.data.message);
       } else {
+        warnNotify("حدث خطأ في الاتصال بالخادم");
         setError("حدث خطأ في الاتصال بالخادم");
       }
     } finally {
@@ -68,8 +104,21 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow">
+    <_motion.div
+      className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
+      variants={pageVariants}
+      initial="hidden"
+      animate="visible"
+      transition={{ duration: 0.45, ease: "easeOut" }}
+    >
+      <_motion.div
+        className="relative max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-lg overflow-hidden"
+        variants={cardVariants}
+        initial="hidden"
+        animate="visible"
+        transition={{ duration: 0.55, ease: "easeOut" }}
+      >
+        <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-50/70 via-white to-purple-50/70 -z-10" />
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             تسجيل الدخول
@@ -77,26 +126,39 @@ export default function Login() {
         </div>
 
         {error && (
-          <div
+          <_motion.div
             className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
             role="alert"
+            variants={alertVariants}
+            initial="hidden"
+            animate="visible"
+            transition={{ duration: 0.4, ease: "easeOut" }}
           >
             <span className="block sm:inline">{error}</span>
-          </div>
+          </_motion.div>
         )}
 
         {success && (
-          <div
+          <_motion.div
             className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
             role="alert"
+            variants={alertVariants}
+            initial="hidden"
+            animate="visible"
+            transition={{ duration: 0.4, ease: "easeOut" }}
           >
             <span className="block sm:inline">{success}</span>
-          </div>
+          </_motion.div>
         )}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
+          <_motion.div
+            className="rounded-md shadow-sm -space-y-px"
+            variants={fieldsContainerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <_motion.div variants={fieldItemVariants}>
               <label
                 htmlFor="username"
                 className="block text-sm font-medium text-gray-700 mb-1"
@@ -118,8 +180,8 @@ export default function Login() {
                   {errors.username.message}
                 </p>
               )}
-            </div>
-            <div className="mt-4">
+            </_motion.div>
+            <_motion.div className="mt-4 pt-5" variants={fieldItemVariants}>
               <label
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700 mb-1"
@@ -141,46 +203,21 @@ export default function Login() {
                   {errors.password.message}
                 </p>
               )}
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-              />
-              <label
-                htmlFor="remember-me"
-                className="mr-2 block text-sm text-gray-900"
-              >
-                تذكرني
-              </label>
-            </div>
-
-            <div className="text-sm">
-              <a
-                href="#"
-                className="font-medium text-indigo-600 hover:text-indigo-500"
-              >
-                نسيت كلمة المرور؟
-              </a>
-            </div>
-          </div>
-
+            </_motion.div>
+          </_motion.div>
           <div>
-            <button
+            <_motion.button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              whileHover={!isLoading ? { scale: 1.01, y: -1 } : {}}
+              whileTap={!isLoading ? { scale: 0.98 } : {}}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-bgColor hover:bg-red-400 focus:outline-none focus:ring-red-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
-            </button>
+            </_motion.button>
           </div>
         </form>
-      </div>
-    </div>
+      </_motion.div>
+    </_motion.div>
   );
 }

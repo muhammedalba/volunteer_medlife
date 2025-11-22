@@ -70,6 +70,16 @@ export const submitComplaint = async (complaintData) => {
   }
 };
 
+export const getSupervisors = async () => {
+  try {
+    const response = await api.get("/supervisors");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching supervisors:", error);
+    throw error;
+  }
+};
+
 // Submit supervisor rating
 export const submitSupervisorRating = async (ratingData) => {
   try {
@@ -96,4 +106,23 @@ export const submitSupervisorRating = async (ratingData) => {
   }
 };
 
-// You can add more API functions here as needed
+// Evaluation related functions
+export const getEvaluations = async () => {
+  try {
+    const response = await api.get("/evaluations");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching evaluations:", error);
+    throw error;
+  }
+};
+
+export const getEvaluationById = async (evaluationId) => {
+  try {
+    const response = await api.get(`/evaluations/${evaluationId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching evaluation ${evaluationId}:`, error);
+    throw error;
+  }
+};

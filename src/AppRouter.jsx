@@ -5,7 +5,7 @@ import {
   Navigate,
   Outlet,
 } from "react-router-dom";
-import { useAuth } from "./contexts/AuthContext";
+
 import { publicRoutes, volunteerRoutes } from "./routes/routes";
 import Cookies from "universal-cookie";
 
@@ -15,10 +15,10 @@ import About from "./pages/public/About";
 import NotFound from "./pages/public/NotFound";
 import Header from "./components/Header";
 import Footer from "./components/Footer/Footer";
-
 // /volunteer
 import Info from "./pages/volunteer/Info";
-
+import EvaluationDetails from "./pages/volunteer/EvaluationDetails";
+import { ToastContainer } from 'react-toastify';
 // Component mapping
 const componentMap = {
   Home,
@@ -26,6 +26,7 @@ const componentMap = {
   NotFound,
   About,
   Info,
+  EvaluationDetails,
 };
 
 // Protected Route Component
@@ -90,7 +91,7 @@ const AppRouter = () => {
         v7_relativeSplatPath: true,
       }}
     >
-      {" "}
+       <ToastContainer />
       <Header />
       <Routes>
         {/* Public routes with header and footer */}

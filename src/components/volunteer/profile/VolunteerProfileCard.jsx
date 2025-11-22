@@ -1,18 +1,31 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { motion as _MOTION } from 'framer-motion';
 
 const VolunteerProfileCard = ({ volunteer, onEditClick }) => {
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+    <_MOTION.div
+      className="relative bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-8 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4 }}
+      whileTap={{ scale: 0.98 }}
+    >
+      <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-l from-bgColor/80 via-bgColor to-red-400/80" />
       <div className="md:flex">
-        <div className="p-8 w-full">
-          <div className="flex justify-between items-start">
-            <div className="uppercase tracking-wide text-sm text-indigo-600 font-semibold">
-              رقم المتطوع: {volunteer.id}
+        <div className="p-6 sm:p-8 w-full">
+          <div className="flex justify-between items-start gap-4">
+            <div>
+              <div className="uppercase tracking-wide text-xs sm:text-sm text-bgColor font-semibold">
+                رقم المتطوع: {volunteer.id}
+              </div>
+              <h2 className="mt-2 text-xl sm:text-2xl font-bold text-gray-900">
+                {volunteer.full_name}
+              </h2>
             </div>
             <button
               onClick={onEditClick}
-              className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full text-bgColor bg-bgColor/10 hover:bg-bgColor/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bgColor transition-colors duration-200"
             >
               <svg
                 className="h-4 w-4 ml-1"
@@ -31,27 +44,24 @@ const VolunteerProfileCard = ({ volunteer, onEditClick }) => {
               تعديل
             </button>
           </div>
-          <h2 className="mt-2 text-2xl font-bold text-gray-900">
-            {volunteer.full_name}
-          </h2>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-3 text-sm sm:text-base text-gray-600">
             {volunteer.role} في {volunteer.volunteer_place}
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {volunteer.study_status && (
-              <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+              <span className="px-3 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-full border border-green-100">
                 {volunteer.study_status}
               </span>
             )}
             {volunteer.academic_degree && (
-              <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+              <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full border border-blue-100">
                 {volunteer.academic_degree}
               </span>
             )}
           </div>
         </div>
       </div>
-    </div>
+    </_MOTION.div>
   );
 };
 

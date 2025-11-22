@@ -1,11 +1,11 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import Cookies from "universal-cookie";
+import { successNotify } from "../utils/Toast";
 // إنشاء السياق
 const AuthContext = createContext(null);
 
 // مكون AuthProvider
 const AuthProvider = ({ children }) => {
-
   const cookies = new Cookies();
   const [volunteer, setVolunteer] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -52,20 +52,15 @@ const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    try {
-      // حذف الكوكيز
-      cookies.remove("access_token", { path: "/" });
-      cookies.remove("volunteer", { path: "/" });
-
-      // إعادة تعيين حالة المستخدم
-      setVolunteer(null);
-      setIsAuthenticated(false);
-
-      return true;
-    } catch (error) {
-      console.error("Logout error:", error);
-      return false;
-    }
+    // حذف الكوكيز
+    cookies.remove("access_token", { path: "/" });
+    cookies.remove("volunteer", { path: "/" });
+    // إعادة تعيين حالة المستخدم
+    setVolunteer(null);
+    setIsAuthenticated(false);
+    successNotify("تم تسجيل الخروج بنجاح ");
+    
+    return true;
   };
 
   const value = {

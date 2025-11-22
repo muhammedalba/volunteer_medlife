@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion as _motion } from "framer-motion";
 import { VolunteerInfoCard, InfoItem } from "..";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { X } from "lucide-react";
+
 import SupervisorRatingForm from "../SupervisorRatingForm";
 
 const RatingsTab = ({ ratings: initialRatings = [], volunteerId }) => {
@@ -15,97 +16,128 @@ const RatingsTab = ({ ratings: initialRatings = [], volunteerId }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ratings, setRatings] = useState(initialRatings);
 
-  // Update ratings when initialRatings prop changes
-  useEffect(() => {
-    setRatings(initialRatings);
-  }, [initialRatings]);
+  useEffect(() => setRatings(initialRatings), [initialRatings]);
+
+  const listContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08 },
+    },
+  };
+
+  const listItem = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  const infoContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.04 },
+    },
+  };
+
+  const infoItemVariant = {
+    hidden: { opacity: 0, y: 6 },
+    visible: { opacity: 1, y: 0 },
+  };
 
   const handleRatingSubmitted = (newRating) => {
-    // Add the new rating to the beginning of the list
     setRatings((prev) => [newRating, ...prev]);
   };
 
   return (
-    <div className="space-y-4">
+    <_motion.div
+      className="space-y-6"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       <div className="flex justify-end">
-        <button
+        <_motion.button
           type="button"
+          whileHover={{ y: -2, scale: 1.03 }}
+          whileTap={{ scale: 0.96 }}
           onClick={() => setIsRatingModalOpen(true)}
-          className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+          className="
+            px-5 py-2.5 rounded-xl text-sm font-semibold
+            bg-primary/80 text-bgColor shadow-lg
+            hover:bg-primary/90 hover:shadow-xl
+            transition-all backdrop-blur-md
+          "
         >
-          {/* <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" /> */}
           إضافة تقييم جديد
-        </button>
+        </_motion.button>
       </div>
 
       <div className="grid grid-cols-1 gap-6">
         {ratings.length > 0 ? (
-          ratings.map((rating) => (
-            <VolunteerInfoCard
-              key={rating.id}
-              title={`تقييم المشرف #${rating.supervisor_id}`}
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <InfoItem
-                  label="درجة النشاط"
-                  value={`${rating.activity_score}/10`}
-                />
-                <InfoItem
-                  label="درجة السلوك"
-                  value={`${rating.behavior_score}/10`}
-                />
-                <InfoItem
-                  label="درجة التحفيز"
-                  value={`${rating.motivation_score}/10`}
-                />
-                <InfoItem
-                  label="المهارات العلمية"
-                  value={`${rating.scientific_skill_score}/10`}
-                />
-                <InfoItem
-                  label="درجة العدالة"
-                  value={`${rating.fairness_score}/5`}
-                />
-                <InfoItem
-                  label="جودة الفريق"
-                  value={`${rating.team_quality_score}/5`}
-                />
-                <InfoItem
-                  label="توزيع المهام"
-                  value={`${rating.tasks_distribution_fairness}/5`}
-                />
-                <InfoItem
-                  label="وقت المشرف"
-                  value={`${rating.general_supervisor_time}/5`}
-                />
-                <InfoItem
-                  label="سلوك الإدارة"
-                  value={rating.management_behavior}
-                />
-                <div className="col-span-full">
-                  <InfoItem
-                    label="الإيجابيات والسلبيات"
-                    value={rating.pros_cons}
-                  />
-                </div>
-                <div className="col-span-full">
-                  <InfoItem
-                    label="المساحة الممنوحة"
-                    value={rating.space_given}
-                  />
-                </div>
-                <div className="col-span-full">
-                  <InfoItem
-                    label="الاستماع والمقترحات"
-                    value={rating.listening_and_suggestions}
-                  />
-                </div>
-              </div>
-            </VolunteerInfoCard>
-          ))
+          <_motion.div
+            variants={listContainer}
+            initial="hidden"
+            animate="visible"
+            className="space-y-6"
+          >
+            {ratings.map((rating) => (
+              <_motion.div
+                key={rating.id}
+                variants={listItem}
+                whileHover={{ y: -3, scale: 1.01 }}
+                className="transition-transform"
+              >
+                <VolunteerInfoCard
+                  title={`تقييم المشرف #${rating.supervisor_id}`}
+                >
+                  <_motion.div
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                    variants={infoContainer}
+                    initial="hidden"
+                    animate="visible"
+                  >
+                    {[
+                      ["درجة النشاط", `${rating.activity_score}/10`],
+                      ["درجة السلوك", `${rating.behavior_score}/10`],
+                      ["درجة التحفيز", `${rating.motivation_score}/10`],
+                      [
+                        "المهارات العلمية",
+                        `${rating.scientific_skill_score}/10`,
+                      ],
+                      ["درجة العدالة", `${rating.fairness_score}/5`],
+                      ["جودة الفريق", `${rating.team_quality_score}/5`],
+                      [
+                        "توزيع المهام",
+                        `${rating.tasks_distribution_fairness}/5`,
+                      ],
+                      ["وقت المشرف", `${rating.general_supervisor_time}/5`],
+                      ["سلوك الإدارة", rating.management_behavior],
+                      ["الإيجابيات والسلبيات", rating.pros_cons],
+                      ["المساحة الممنوحة", rating.space_given],
+                      ["الاستماع والمقترحات", rating.listening_and_suggestions],
+                    ].map(([label, value], idx) => (
+                      <_motion.div
+                        key={idx}
+                        className={idx >= 8 ? "col-span-full" : ""}
+                        variants={infoItemVariant}
+                      >
+                        <InfoItem label={label} value={value} />
+                      </_motion.div>
+                    ))}
+                  </_motion.div>
+                </VolunteerInfoCard>
+              </_motion.div>
+            ))}
+          </_motion.div>
         ) : (
-          <div className="text-center py-12 bg-white rounded-xl shadow">
-            <p className="text-gray-500">لا توجد تقييمات للمشرفين</p>
+          <div
+            className="
+              text-center py-14 
+              backdrop-blur-lg bg-white/20 
+              rounded-3xl shadow-xl border border-white/30
+            "
+          >
+            <p className="text-gray-700 text-lg">لا توجد تقييمات للمشرفين</p>
           </div>
         )}
       </div>
@@ -115,21 +147,26 @@ const RatingsTab = ({ ratings: initialRatings = [], volunteerId }) => {
         open={isRatingModalOpen}
         onOpenChange={(open) => !isSubmitting && setIsRatingModalOpen(open)}
       >
-        <DialogContent className="sm:max-w-[625px] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[625px] bg-white  shadow-2xl rounded-2xl ">
           <DialogHeader>
-            <DialogTitle className="text-right">إضافة تقييم جديد</DialogTitle>
+            <DialogTitle className="text-center text-gray-900">
+              إضافة تقييم جديد
+            </DialogTitle>
+
             <Button
               variant="ghost"
               size="icon"
-              className="absolute left-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+              className="
+                absolute right-1 top-0 rounded-full 
+                bg-white/40 backdrop-blur-md 
+                hover:bg-white/60 shadow
+              "
               onClick={() => !isSubmitting && setIsRatingModalOpen(false)}
               disabled={isSubmitting}
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">إغلاق</span>
-            </Button>
+            ></Button>
           </DialogHeader>
-          <div className="p-1">
+
+          <div className="p-1 overflow-y-auto">
             <SupervisorRatingForm
               volunteerId={volunteerId}
               onSuccess={(newRating) => {
@@ -141,7 +178,7 @@ const RatingsTab = ({ ratings: initialRatings = [], volunteerId }) => {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </_motion.div>
   );
 };
 

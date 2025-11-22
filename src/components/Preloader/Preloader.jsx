@@ -2,8 +2,8 @@
 const Preloader = ({ message = "جاري تحميل البيانات..." }) => (
   <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
     <div className="text-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-      <p className="text-gray-700">{message}</p>
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-bgColor mx-auto mb-4"></div>
+      <p className="text-red-600">{message}</p>
     </div>
   </div>
 );

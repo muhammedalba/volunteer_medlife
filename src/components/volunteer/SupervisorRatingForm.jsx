@@ -1,311 +1,281 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { toast } from "react-toastify";
-import { submitSupervisorRating } from "@/services/volunteerService";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import {
+  submitSupervisorRating,
+  getSupervisors,
+} from "@/services/volunteerService";
+import FormInput from "./form/FormInput";
+import supervisorRatingSchema from "./validation/supervisorRatingSchema";
+
+const steps = ["بيانات المشرف", "درجات التقييم", "ملاحظاتك التفصيلية"];
+const stepFields = [
+  ["supervisor_id"],
+  [
+    "activity_score",
+    "behavior_score",
+    "motivation_score",
+    "scientific_skill_score",
+    "fairness_score",
+    "team_quality_score",
+    "tasks_distribution_fairness",
+    "general_supervisor_time",
+  ],
+  ["management_behavior", "pros_cons", "space_given"],
+];
 
 const SupervisorRatingForm = ({ volunteerId, onSuccess, onClose }) => {
+  const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [supervisors, setSupervisors] = useState([]);
-  const [formData, setFormData] = useState({
-    supervisor_id: "",
-    activity_score: 5,
-    behavior_score: 5,
-    motivation_score: 5,
-    scientific_skill_score: 5,
-    fairness_score: 3,
-    team_quality_score: 3,
-    tasks_distribution_fairness: 3,
-    general_supervisor_time: 3,
-    management_behavior: "",
-    pros_cons: "",
-    space_given: "",
-    listening_and_suggestions: "",
-    volunteer_id: volunteerId,
+  const [isLoadingSupervisors, setIsLoadingSupervisors] = useState(false);
+  const [supervisorsError, setSupervisorsError] = useState("");
+
+  const defaultValues = useMemo(
+    () => ({
+      supervisor_id: "",
+      activity_score: 5,
+      behavior_score: 5,
+      motivation_score: 5,
+      scientific_skill_score: 5,
+      fairness_score: 3,
+      team_quality_score: 3,
+      tasks_distribution_fairness: 3,
+      general_supervisor_time: 3,
+      management_behavior: "",
+      pros_cons: "",
+      space_given: "",
+      listening_and_suggestions: "",
+      volunteer_id: volunteerId,
+    }),
+    [volunteerId]
+  );
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    trigger,
+  } = useForm({
+    resolver: yupResolver(supervisorRatingSchema),
+    defaultValues,
+    mode: "onTouched",
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]:
-        name.endsWith("_score") ||
-        name.endsWith("_fairness") ||
-        name.endsWith("_time")
-          ? Number(value)
-          : value,
-    }));
-  };
+  const scoreFields = useMemo(
+    () => [
+      { name: "activity_score", label: "درجة النشاط (1-10)", min: 1, max: 10 },
+      { name: "behavior_score", label: "درجة السلوك (1-10)", min: 1, max: 10 },
+      {
+        name: "motivation_score",
+        label: "درجة التحفيز (1-10)",
+        min: 1,
+        max: 10,
+      },
+      {
+        name: "scientific_skill_score",
+        label: "المهارات العلمية (1-10)",
+        min: 1,
+        max: 10,
+      },
+      { name: "fairness_score", label: "درجة العدالة (1-5)", min: 1, max: 5 },
+      {
+        name: "team_quality_score",
+        label: "جودة الفريق (1-5)",
+        min: 1,
+        max: 5,
+      },
+      {
+        name: "tasks_distribution_fairness",
+        label: "توزيع المهام (1-5)",
+        min: 1,
+        max: 5,
+      },
+      {
+        name: "general_supervisor_time",
+        label: "وقت المشرف (1-5)",
+        min: 1,
+        max: 5,
+      },
+    ],
+    []
+  );
 
-  // Fetch supervisors list - you'll need to implement this API endpoint
-  useEffect(() => {
-    const fetchSupervisors = async () => {
-      try {
-        // Replace with your actual API call to fetch supervisors
-        // const response = await api.get('/supervisors');
-        // setSupervisors(response.data);
+  const textFields = useMemo(
+    () => [
+      { name: "management_behavior", label: "سلوك الإدارة", rows: 2 },
+      { name: "pros_cons", label: "الإيجابيات والسلبيات", rows: 3 },
+      { name: "space_given", label: "المساحة الممنوحة", rows: 2 },
+    ],
+    []
+  );
 
-        // For now, using a placeholder
-        setSupervisors([
-          { id: 1, name: "المشرف 1" },
-          { id: 2, name: "المشرف 2" },
-        ]);
-      } catch (error) {
-        console.error("Error fetching supervisors:", error);
-        toast.error("فشل في تحميل قائمة المشرفين");
-      }
-    };
-
-    fetchSupervisors();
+  const fetchSupervisors = useCallback(async () => {
+    try {
+      setIsLoadingSupervisors(true);
+      setSupervisorsError("");
+      const data = await getSupervisors();
+      if (data?.status && Array.isArray(data.supervisors))
+        setSupervisors(data.supervisors);
+      else setSupervisors([]);
+    } catch {
+      toast.error("فشل في تحميل قائمة المشرفين");
+      setSupervisorsError("فشل في تحميل قائمة المشرفين");
+    } finally {
+      setIsLoadingSupervisors(false);
+    }
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    fetchSupervisors();
+  }, [fetchSupervisors]);
 
-    // Validate required fields
-    if (!formData.supervisor_id) {
-      toast.error("الرجاء اختيار المشرف");
-      return;
-    }
+  const onSubmit = useCallback(
+    async (data) => {
+      setIsSubmitting(true);
+      try {
+        const response = await submitSupervisorRating(data);
+        toast.success(response.message || "تم إرسال التقييم بنجاح");
+        if (onSuccess) onSuccess(response.rating);
+      } catch {
+        toast.error("حدث خطأ أثناء إرسال التقييم");
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [onSuccess]
+  );
 
-    setIsSubmitting(true);
-
-    try {
-      const response = await submitSupervisorRating(formData);
-      toast.success(response.message || "تم إرسال التقييم بنجاح");
-      onSuccess(response.rating);
-    } catch (error) {
-      console.error("Error submitting rating:", error);
-      toast.error(
-        error.response?.data?.message || "حدث خطأ أثناء إرسال التقييم"
-      );
-    } finally {
-      setIsSubmitting(false);
+  const nextStep = async () => {
+    const fieldsToValidate = stepFields[currentStep] || [];
+    const valid = await trigger(fieldsToValidate);
+    if (valid) {
+      setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
     }
   };
+  const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 0));
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <h3 className="text-lg font-medium text-gray-900 mb-4">تقييم المشرف</h3>
-
-      {/* Supervisor Selection */}
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
-          اسم المشرف <span className="text-red-500">*</span>
-        </label>
-        <select
-          name="supervisor_id"
-          value={formData.supervisor_id}
-          onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          required
-        >
-          <option value="">اختر المشرف</option>
-          {supervisors.map((supervisor) => (
-            <option key={supervisor.id} value={supervisor.id}>
-              {supervisor.name}
-            </option>
-          ))}
-        </select>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-6 p-5  bg-white rounded-2xl  relative transition-all duration-500 h-[450px] "
+    >
+      {/* Progress Bar */}
+      <div className="flex items-center  gap-2 mb-5">
+        {steps.map((step, index) => (
+          <div key={index} className="flex-1 flex flex-col items-center">
+            <div
+              className={`h-2 w-full rounded-full transition-all duration-500 ${
+                index <= currentStep
+                  ? "bg-gradient-to-r from-blue-500 to-indigo-500"
+                  : "bg-gray-300"
+              }`}
+            ></div>
+            <p
+              className={`text-xs mt-1 transition-colors duration-500 ${
+                index <= currentStep
+                  ? "text-blue-600 font-semibold"
+                  : "text-gray-400"
+              }`}
+            >
+              {step}
+            </p>
+          </div>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Activity Score */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            درجة النشاط (1-10)
-          </label>
-          <input
-            type="number"
-            name="activity_score"
-            min="1"
-            max="10"
-            value={formData.activity_score}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            required
-          />
-        </div>
+      {/* Step Content */}
+      <div className="space-y-4">
+        {/* Step 1: Supervisors */}
+        {currentStep === 0 && (
+          <div className="space-y-2">
+            <FormInput
+              label="اختر المشرف"
+              name="supervisor_id"
+              type="select"
+              {...register("supervisor_id")}
+              disabled={isLoadingSupervisors || !!supervisorsError}
+              options={supervisors.map((s) => ({
+                value: s.id,
+                label: s.full_name || s.username,
+              }))}
+            />
+            {errors.supervisor_id && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.supervisor_id.message}
+              </p>
+            )}
+          </div>
+        )}
 
-        {/* Behavior Score */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            درجة السلوك (1-10)
-          </label>
-          <input
-            type="number"
-            name="behavior_score"
-            min="1"
-            max="10"
-            value={formData.behavior_score}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            required
-          />
-        </div>
+        {/* Step 2: Scores */}
+        {currentStep === 1 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {scoreFields.map((f) => (
+              <FormInput
+                key={f.name}
+                label={f.label}
+                name={f.name}
+                type="number"
+                min={f.min}
+                max={f.max}
+                {...register(f.name)}
+              />
+            ))}
+          </div>
+        )}
 
-        {/* Motivation Score */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            درجة التحفيز (1-10)
-          </label>
-          <input
-            type="number"
-            name="motivation_score"
-            min="1"
-            max="10"
-            value={formData.motivation_score}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            required
-          />
-        </div>
-
-        {/* Scientific Skill Score */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            المهارات العلمية (1-10)
-          </label>
-          <input
-            type="number"
-            name="scientific_skill_score"
-            min="1"
-            max="10"
-            value={formData.scientific_skill_score}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            required
-          />
-        </div>
-
-        {/* Fairness Score */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            درجة العدالة (1-5)
-          </label>
-          <input
-            type="number"
-            name="fairness_score"
-            min="1"
-            max="5"
-            value={formData.fairness_score}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            required
-          />
-        </div>
-
-        {/* Team Quality Score */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            جودة الفريق (1-5)
-          </label>
-          <input
-            type="number"
-            name="team_quality_score"
-            min="1"
-            max="5"
-            value={formData.team_quality_score}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            required
-          />
-        </div>
-
-        {/* Tasks Distribution Fairness */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            توزيع المهام (1-5)
-          </label>
-          <input
-            type="number"
-            name="tasks_distribution_fairness"
-            min="1"
-            max="5"
-            value={formData.tasks_distribution_fairness}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            required
-          />
-        </div>
-
-        {/* General Supervisor Time */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            وقت المشرف (1-5)
-          </label>
-          <input
-            type="number"
-            name="general_supervisor_time"
-            min="1"
-            max="5"
-            value={formData.general_supervisor_time}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            required
-          />
-        </div>
+        {/* Step 3: Text Feedback */}
+        {currentStep === 2 && (
+          <div className="space-y-4">
+            {textFields.map((f) => (
+              <div key={f.name} className="space-y-1">
+                <FormInput
+                  label={f.label}
+                  name={f.name}
+                  type="textarea"
+                  rows={f.rows}
+                  {...register(f.name)}
+                />
+                {errors[f.name] && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors[f.name]?.message}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Management Behavior */}
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
-          سلوك الإدارة
-        </label>
-        <textarea
-          name="management_behavior"
-          value={formData.management_behavior}
-          onChange={handleChange}
-          rows="2"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          required
-        />
-      </div>
-
-      {/* Pros and Cons */}
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
-          الإيجابيات والسلبيات
-        </label>
-        <textarea
-          name="pros_cons"
-          value={formData.pros_cons}
-          onChange={handleChange}
-          rows="3"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          required
-        />
-      </div>
-
-      {/* Space Given */}
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
-          المساحة الممنوحة
-        </label>
-        <textarea
-          name="space_given"
-          value={formData.space_given}
-          onChange={handleChange}
-          rows="2"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          required
-        />
-      </div>
-
-      <div className="flex justify-end space-x-3 pt-4">
+      {/* Navigation Buttons */}
+      <div className="flex justify-between w-full mt-5">
         <button
           type="button"
-          onClick={onClose}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          disabled={isSubmitting}
+          onClick={prevStep}
+          disabled={currentStep === 0}
+          className="px-4 py-2 text-sm rounded-xl border border-gray-300 bg-white hover:bg-gray-50 transition"
         >
-          إلغاء
+          السابق
         </button>
-        <button
-          type="submit"
-          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "جاري الإرسال..." : "حفظ التقييم"}
-        </button>
+        {currentStep < steps.length - 1 ? (
+          <button
+            type="button"
+            onClick={nextStep}
+            className="px-5 py-2 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-500 transition"
+          >
+            التالي
+          </button>
+        ) : (
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="px-5 py-2 text-sm font-semibold text-white bg-green-600 rounded-xl hover:bg-green-500 transition"
+          >
+            {isSubmitting ? "جاري الإرسال..." : "حفظ التقييم"}
+          </button>
+        )}
       </div>
     </form>
   );
