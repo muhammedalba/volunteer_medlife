@@ -61,7 +61,7 @@ const ComplaintsTab = ({ complaints = [], volunteerId }) => {
           whileHover={{ y: -2, scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
           onClick={() => setIsModalOpen(true)}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors flex items-center shadow-sm"
+          className="px-4 py-2 bg-bgColor text-white rounded-md hover:bg-red-400 transition-colors flex items-center shadow-sm"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -99,7 +99,7 @@ const ComplaintsTab = ({ complaints = [], volunteerId }) => {
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   rows="4"
                   placeholder="اكتب شكواك هنا..."
                   required
@@ -116,13 +116,13 @@ const ComplaintsTab = ({ complaints = [], volunteerId }) => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 flex items-center"
+                  className="px-4 py-2 bg-bgColor text-white rounded-md hover:bg-red-500 disabled:opacity-50 flex items-center"
                   disabled={isSubmitting || !content.trim()}
                 >
                   {isSubmitting ? (
                     <>
                       <svg
-                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                        className="  animate-spin -ml-1 mr-2 h-4 w-4 text-white"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -141,7 +141,7 @@ const ComplaintsTab = ({ complaints = [], volunteerId }) => {
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         ></path>
                       </svg>
-                      جاري الإرسال...
+                      <span className="mx-2"> جاري الإرسال...</span>
                     </>
                   ) : (
                     "إرسال الشكوى"

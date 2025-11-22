@@ -152,7 +152,7 @@ export default function Info() {
             <PersonalInfoTab volunteer={volunteer} />
           )}
           {activeTab === "evaluations" && (
-            <EvaluationsTab evaluations={volunteer.evaluations || []} />
+            <EvaluationsTab  />
           )}
           {activeTab === "ratings" && (
             <RatingsTab
@@ -179,7 +179,7 @@ export default function Info() {
 
       {/* Toast Container */}
       {isLoading && (
-        <div className="fixed bottom-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-md shadow-lg">
+        <div className="fixed bottom-4 right-4 bg-bgColor text-white px-4 py-2 rounded-md shadow-lg">
           جاري تحديث البيانات...
         </div>
       )}

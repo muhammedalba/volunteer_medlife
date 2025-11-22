@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback, memo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getEvaluationById } from "@/services/volunteerService";
 import EvaluationCard from "@/components/volunteer/EvaluationCard";
@@ -14,83 +14,128 @@ import {
   Calendar,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import Preloader from "../../components/Preloader/Preloader";
 
-// Enhanced animation variants for a more modern feel
-const containerVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.3,
-      duration: 0.6,
-      ease: "easeOut",
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { y: 30, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut",
-    },
-  },
-};
-
-const cardHover = {
-  scale: 1.03,
-  boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.1)",
-  transition: {
-    duration: 0.3,
-    ease: "easeInOut",
-  },
-};
-
-const buttonHover = {
-  scale: 1.05,
-  transition: {
-    duration: 0.2,
-  },
-};
-
-const EvaluationDetails = () => {
+const EvaluationDetails = memo(() => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [evaluation, setEvaluation] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  // Enhanced animation variants for a more modern feel
+  const containerVariants = useMemo(
+    () => ({
+      hidden: { opacity: 0, y: 50 },
+      visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+          staggerChildren: 0.15,
+          delayChildren: 0.3,
+          duration: 0.6,
+          ease: "easeOut",
+        },
+      },
+    }),
+    []
+  );
 
-  useEffect(() => {
-    const fetchEvaluation = async () => {
-      try {
-        const data = await getEvaluationById(id);
-        setEvaluation(data.evaluation);
-      } catch (err) {
-        console.error("Error fetching evaluation details:", err);
-        setError("فشل في تحميل تفاصيل التقييم");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const itemVariants = useMemo(
+    () => ({
+      hidden: { y: 30, opacity: 0 },
+      visible: {
+        y: 0,
+        opacity: 1,
+        transition: {
+          duration: 0.5,
+          ease: "easeOut",
+        },
+      },
+    }),
+    []
+  );
 
-    fetchEvaluation();
+  const cardHover = useMemo(
+    () => ({
+      scale: 1.03,
+      boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.1)",
+      transition: {
+        duration: 0.3,
+        ease: "easeInOut",
+      },
+    }),
+    []
+  );
+
+  const buttonHover = useMemo(
+    () => ({
+      scale: 1.05,
+      transition: {
+        duration: 0.2,
+      },
+    }),
+    []
+  );
+  const handleGoBack = useCallback(() => {
+    navigate(-1);
+  }, [navigate]);
+
+  const fetchEvaluation = useCallback(async () => {
+    try {
+      const data = await getEvaluationById(id);
+      setEvaluation(data.evaluation);
+      console.log(data);
+    } catch (err) {
+      console.error("Error fetching evaluation details:", err);
+      setError("فشل في تحميل تفاصيل التقييم");
+    } finally {
+      setIsLoading(false);
+    }
   }, [id]);
 
+  useEffect(() => {
+    fetchEvaluation();
+  }, [fetchEvaluation]);
+
+  const supervisorInfo = useMemo(() => {
+    if (!evaluation?.supervisor) return [];
+
+    return [
+      {
+        icon: User,
+        label: "اسم المشرف",
+        value: evaluation.supervisor?.full_name,
+      },
+      {
+        icon: User,
+        label: "اسم المستخدم",
+        value: evaluation.supervisor?.username,
+      },
+      {
+        icon: University,
+        label: "الجامعة",
+        value: evaluation.supervisor?.university,
+      },
+      {
+        icon: BookOpen,
+        label: "التخصص",
+        value: evaluation.supervisor?.specialization,
+      },
+      {
+        icon: GraduationCap,
+        label: "الدرجة العلمية",
+        value: evaluation.supervisor?.academic_degree,
+      },
+      {
+        icon: Calendar,
+        label: "سنة التخرج",
+        value: evaluation.supervisor?.study_year,
+      },
+    ];
+  }, [evaluation?.supervisor]);
+
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600"
-        ></motion.div>
-      </div>
-    );
+    return <Preloader />;
   }
 
   if (error) {
@@ -104,7 +149,7 @@ const EvaluationDetails = () => {
         <motion.button
           whileHover={buttonHover}
           whileTap={{ scale: 0.95 }}
-          onClick={() => navigate(-1)}
+          onClick={handleGoBack}
           className="px-6 py-3 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-colors duration-300 flex items-center"
         >
           <ArrowRight className="ml-2 h-5 w-5" />
@@ -121,12 +166,14 @@ const EvaluationDetails = () => {
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-gray-50 to-gray-100 text-center"
       >
-        <p className="text-gray-600 text-lg font-semibold mb-4">لم يتم العثور على التقييم المطلوب</p>
+        <p className="text-gray-600 text-lg font-semibold mb-4">
+          لم يتم العثور على التقييم المطلوب
+        </p>
         <motion.button
           whileHover={buttonHover}
           whileTap={{ scale: 0.95 }}
-          onClick={() => navigate(-1)}
-          className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300 flex items-center"
+          onClick={handleGoBack}
+          className="px-6 py-3 bg-bgColor text-white rounded-lg shadow-md hover:bg-red-500 transition-colors duration-300 flex items-center"
         >
           <ArrowRight className="ml-2 h-5 w-5" />
           العودة
@@ -161,8 +208,8 @@ const EvaluationDetails = () => {
           <motion.button
             whileHover={buttonHover}
             whileTap={{ scale: 0.95 }}
-            onClick={() => navigate(-1)}
-            className="group px-5 py-2.5 bg-white text-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex items-center"
+            onClick={handleGoBack}
+            className="group px-5 py-2.5 bg-bgColor hover:bg-red-500 text-gray-100  hover:text-gray-800 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex items-center"
           >
             <ArrowRight className="ml-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
             العودة إلى قائمة التقييمات
@@ -185,7 +232,7 @@ const EvaluationDetails = () => {
             >
               <EvaluationCard evaluation={evaluation} />
             </motion.div>
-
+            {/* supervisor details */}
             <motion.div
               variants={containerVariants}
               initial="hidden"
@@ -197,114 +244,42 @@ const EvaluationDetails = () => {
                   variants={itemVariants}
                   className="text-2xl font-semibold text-gray-800 mb-8 pb-4 border-b border-gray-200 flex items-center"
                 >
-                  <User className="ml-3 h-6 w-6 text-blue-600" />
+                  <User className="ml-3 h-6 w-6 bg-bgColor-600" />
                   معلومات المشرف
                 </motion.h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <motion.div
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.02, backgroundColor: "#f8fafc" }}
-                    className="p-5 bg-gray-50 rounded-xl transition-all duration-300"
-                  >
-                    <div className="flex items-center">
-                      <User className="h-5 w-5 text-blue-600 mr-3" />
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500">الاسم الكامل</h3>
+                  {supervisorInfo.map((item, index) => (
+                    <motion.div
+                      key={index}
+                      variants={itemVariants}
+                      whileHover={{ scale: 1.02, backgroundColor: "#f8fafc" }}
+                      className="p-5 bg-gray-50 rounded-xl transition-all duration-300"
+                    >
+                      <div className="">
+                        <div className="flex items-center gap-2">
+                          <item.icon className="h-5 w-5 text-bgColor" />
+                          <h3 className="text-sm font-medium text-gray-500">
+                            {item.label}
+                          </h3>
+                        </div>
                         <p className="mt-1 text-gray-800 font-semibold">
-                          {evaluation.supervisor?.full_name || "غير متوفر"}
+                          {item.value || "غير متوفر"}
                         </p>
                       </div>
-                    </div>
-                  </motion.div>
-
-                  <motion.div
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.02, backgroundColor: "#f8fafc" }}
-                    className="p-5 bg-gray-50 rounded-xl transition-all duration-300"
-                  >
-                    <div className="flex items-center">
-                      <Mail className="h-5 w-5 text-blue-600 mr-3" />
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500">البريد الإلكتروني</h3>
-                        <p className="mt-1 text-gray-800 font-semibold">
-                          {evaluation.supervisor?.username || "غير متوفر"}
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
-
-                  <motion.div
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.02, backgroundColor: "#f8fafc" }}
-                    className="p-5 bg-gray-50 rounded-xl transition-all duration-300"
-                  >
-                    <div className="flex items-center">
-                      <University className="h-5 w-5 text-blue-600 mr-3" />
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500">الجامعة</h3>
-                        <p className="mt-1 text-gray-800 font-semibold">
-                          {evaluation.supervisor?.university || "غير متوفر"}
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
-
-                  <motion.div
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.02, backgroundColor: "#f8fafc" }}
-                    className="p-5 bg-gray-50 rounded-xl transition-all duration-300"
-                  >
-                    <div className="flex items-center">
-                      <BookOpen className="h-5 w-5 text-blue-600 mr-3" />
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500">التخصص</h3>
-                        <p className="mt-1 text-gray-800 font-semibold">
-                          {evaluation.supervisor?.specialization || "غير متوفر"}
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
-
-                  <motion.div
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.02, backgroundColor: "#f8fafc" }}
-                    className="p-5 bg-gray-50 rounded-xl transition-all duration-300"
-                  >
-                    <div className="flex items-center">
-                      <GraduationCap className="h-5 w-5 text-blue-600 mr-3" />
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500">الدرجة العلمية</h3>
-                        <p className="mt-1 text-gray-800 font-semibold">
-                          {evaluation.supervisor?.academic_degree || "غير متوفر"}
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
-
-                  <motion.div
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.02, backgroundColor: "#f8fafc" }}
-                    className="p-5 bg-gray-50 rounded-xl transition-all duration-300"
-                  >
-                    <div className="flex items-center">
-                      <Calendar className="h-5 w-5 text-blue-600 mr-3" />
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500">سنة التخرج</h3>
-                        <p className="mt-1 text-gray-800 font-semibold">
-                          {evaluation.supervisor?.study_year || "غير متوفر"}
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
+                    </motion.div>
+                  ))}
                 </div>
               </div>
             </motion.div>
+            {/* supervisor details   */}
           </motion.div>
         </AnimatePresence>
       </div>
     </motion.div>
   );
-};
+});
+
+EvaluationDetails.displayName = "EvaluationDetails";
 
 export default EvaluationDetails;

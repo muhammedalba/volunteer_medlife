@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getEvaluations } from "@/services/volunteerService";
 import EvaluationCard from "../EvaluationCard";
+import Preloader from "../../../components/Preloader/Preloader";
+import { errorNotify } from "../../../utils/Toast";
 
 const EvaluationsTab = () => {
   const [evaluations, setEvaluations] = useState([]);
@@ -17,6 +19,7 @@ const EvaluationsTab = () => {
       } catch (err) {
         console.error("Error fetching evaluations:", err);
         setError("فشل في تحميل سجلات التقييم");
+        errorNotify("فشل في تحميل سجلات التقييم");
       } finally {
         setIsLoading(false);
       }
@@ -30,11 +33,7 @@ const EvaluationsTab = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
+    return <Preloader />;
   }
 
   if (error) {

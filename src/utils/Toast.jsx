@@ -26,7 +26,7 @@ export const successNotify = (success) => {
 
     theme: "light",
     transition: Bounce,
-    progressClassName: "bg-bgColor",
+    progressClassName: "bgColor",
   });
 };
 

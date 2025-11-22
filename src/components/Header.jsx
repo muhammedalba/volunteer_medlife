@@ -27,63 +27,6 @@ const Header = () => {
         animate="visible"
         transition={{ duration: 0.45, ease: "easeOut" }}
       >
-        {/* top bar */}
-        <div className=" bg-gray-100  ">
-          <div className="p-2 ">
-            <div className=" w-full flex  items-center justify-between">
-              <div className="">
-                <ul className="w-full flex  items-center justify-between">
-                  <li className="px-2 flex  items-center justify-between">
-                    <a target="_blank" href="https://medlife.hurufy.com/">
-                      <Icon
-                        icon="icon-park-outline:earth"
-                        width="24"
-                        height="24"
-                        color="fc4c55"
-                      />
-                    </a>
-                  </li>
-                  <li className="px-2 flex  items-center justify-between">
-                    <Link to="/About">من نحن </Link>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <ul className="  w-full flex   items-center justify-between">
-                  <li className="px-2   ">
-                    <a
-                      href="tel:+963998942124"
-                      className="items-center flex justify-between "
-                    >
-                      <span className=" hidden md:block">963998942124+</span>
-                      <Icon
-                        icon={"carbon:phone-filled"}
-                        width={"20"}
-                        color="fc4c55"
-                      />
-                    </a>
-                  </li>
-                  <li className="px-2">
-                    <a
-                      href="mailto:mailto:medlife741@gmail.com"
-                      className="text-decoration-none flex  items-center justify-between"
-                    >
-                      <span className=" hidden md:block">
-                        mailto:medlife741@gmail.com
-                      </span>
-                      <Icon
-                        className="mx-1"
-                        icon={"line-md:email"}
-                        width={"20"}
-                        color="fc4c55"
-                      />
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
         {/* nav bar */}
         <div className="bg-minColor text-textColor border  mx-auto px-4 sm:px-6 lg:px-8">
           <div className=" ">
@@ -150,7 +93,7 @@ const Header = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <Link to="#" className="flex items-center">
+                  <Link to="/" className="flex items-center">
                     <Icon
                       color="fc4c55"
                       icon="line-md:home-twotone"
