@@ -5,7 +5,7 @@ const cookies = new Cookies();
 
 // Create an axios instance with default config
 const api = axios.create({
-  baseURL: "http://127.0.0.1:8000/api",
+  baseURL: import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000/api",
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
@@ -14,13 +14,22 @@ const api = axios.create({
 
 // Add a request interceptor to include the auth token
 api.interceptors.request.use((config) => {
-  const token = cookies.get("access_token");
+  const token = cookies.get("access_token", { path: "/" });
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
-
+// login
+export const loginVolunteer = async (data) => {
+  try {
+    const response = await api.post("/login", data);
+    return response.data;
+  } catch (error) {
+    console.error("Login error:", error);
+    throw error;
+  }
+};
 // Reusable PUT function
 export const updateVolunteerInfo = async (data) => {
   const params = new URLSearchParams();
@@ -30,6 +39,7 @@ export const updateVolunteerInfo = async (data) => {
 
   try {
     const response = await api.put(`/volunteer/info?${params.toString()}`, {});
+
     return response.data;
   } catch (error) {
     console.error("Error updating volunteer info:", error);
@@ -37,23 +47,53 @@ export const updateVolunteerInfo = async (data) => {
   }
 };
 
-
-// 
+//
 // In src/services/volunteerService.js
 export const getVolunteerInfo = async () => {
   try {
-    const response = await api.get('/volunteer/info');
+    const response = await api.get("/volunteer/info");
     return response.data;
   } catch (error) {
-    console.error('Error fetching volunteer info:', error);
+    console.error("Error fetching volunteer info:", error);
     throw error;
   }
 };
 
 // Update the default export
-export default {
-  updateVolunteerInfo,
-  getVolunteerInfo
+export const submitComplaint = async (complaintData) => {
+  try {
+    const response = await api.post("/complaints", complaintData);
+    return response.data;
+  } catch (error) {
+    console.error("Error submitting complaint:", error);
+    throw error;
+  }
 };
-// You can add more API functions here as needed
 
+// Submit supervisor rating
+export const submitSupervisorRating = async (ratingData) => {
+  try {
+    const response = await api.post("/supervisor-ratings", {
+      supervisor_id: ratingData.supervisor_id,
+      activity_score: ratingData.activity_score,
+      behavior_score: ratingData.behavior_score,
+      motivation_score: ratingData.motivation_score,
+      scientific_skill_score: ratingData.scientific_skill_score,
+      pros_cons: ratingData.pros_cons,
+      fairness_score: ratingData.fairness_score,
+      team_quality_score: ratingData.team_quality_score,
+      tasks_distribution_fairness: ratingData.tasks_distribution_fairness,
+      general_supervisor_time: ratingData.general_supervisor_time,
+      management_behavior: ratingData.management_behavior,
+      space_given: ratingData.space_given,
+      listening_and_suggestions: ratingData.listening_and_suggestions,
+      volunteer_id: ratingData.volunteer_id,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error submitting supervisor rating:", error);
+    throw error;
+  }
+};
+
+// You can add more API functions here as needed

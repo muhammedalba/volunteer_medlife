@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import {
@@ -8,32 +7,33 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
+import Cookies from "universal-cookie";
 import logo from "../assets/AfiaLogo.png";
 import { Icon } from "@iconify/react";
 
 
 const Header = () => {
+  const {volunteer, logout } = useAuth();
+  const cookies = new Cookies();
 
-  const { user, logout } = useAuth();
+  // const volunteer = cookies.get("volunteer", { path: "/" });
   const navigate = useNavigate();
-
   const handleLogout = async () => {
     try {
-
+      await logout();
+      cookies.remove("volunteer");
+      navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);
     }
   };
 
-  const adminLinks = [{ to: "/admin/dashboard", label: "لوحة التحكم" }];
-
-  const patientLinks = [{ to: "/patient/dashboard", label: "لوحة التحكم" }];
+  const volunteerLinks = [{ to: "volunteer/info", label: "معلومات المتطوع" }];
 
   const renderNavLinks = () => {
-    if (!user?.role) return null;
+    if (!volunteer?.role) return null;
 
-    const links = user?.role === "admin" ? adminLinks : patientLinks;
+    const links = volunteer?.role === "volunteer" && volunteerLinks;
 
     return (
       <div className="flex items-center space-x-3 rtl:space-x-reverse">
@@ -115,7 +115,7 @@ const Header = () => {
           <div className=" ">
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center">
-                {user?.role ? (
+                {volunteer?.role ? (
                   <div className="flex items-center space-x-4 rtl:space-x-reverse">
                     <DropdownMenu>
                       <DropdownMenuTrigger>
@@ -162,7 +162,8 @@ const Header = () => {
                       </DropdownMenuContent>
                     </DropdownMenu>
                     <span className="text-textColor hidden sm:block">
-                      مرحباً، <span>{user?.full_name || user?.email}</span>
+                      مرحباً،{" "}
+                      <span>{volunteer?.full_name || volunteer?.username}</span>
                     </span>
                     <Link to="/" className="flex items-center">
                       <Icon
@@ -173,10 +174,10 @@ const Header = () => {
                         path="/"
                       />
                     </Link>
-                    <Link to="/admin/dashboard" className="flex items-center">
+                    <Link to="/volunteer/info" className="flex items-center">
                       <Icon
                         color="fc4c55"
-                        icon="mingcute:dashboard-line"
+                        icon="solar:user-id-broken"
                         width="24"
                         height="24"
                       />
@@ -194,22 +195,13 @@ const Header = () => {
                         />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        {/* <DropdownMenuLabel> تسجيل </DropdownMenuLabel> */}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
                           <Link
-                            to="/patient/login"
+                            to="/login"
                             className="text-textColor hover:text-primary px-3 py-2 rounded-md text-sm font-medium"
                           >
-                            تسجيل دخول المريض
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Link
-                            to="/admin/login"
-                            className="text-textColor hover:text-primary px-3 py-2 rounded-md text-sm font-medium"
-                          >
-                            تسجيل دخول المسؤول
+                            تسجيل دخول المتطوع
                           </Link>
                         </DropdownMenuItem>
                       </DropdownMenuContent>

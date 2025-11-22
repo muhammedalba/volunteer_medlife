@@ -5,6 +5,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext.jsx";
+import { loginVolunteer } from '../../services/volunteerService.js';
 
 // تعريف مخطط التحقق من صحة البيانات
 const loginSchema = yup
@@ -41,22 +42,15 @@ export default function Login() {
     setSuccess("");
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/login",
-        data
-      );
+      const responseData = await loginVolunteer(data);
 
       // استدعاء دالة تسجيل الدخول من السياق
-      const loginSuccess = await login(response.data);
+      const loginSuccess = await login(responseData);
 
       if (loginSuccess) {
         setSuccess("تم تسجيل الدخول بنجاح!");
         reset();
-
-        // إعادة التوجيه بعد ثانيتين
-        setTimeout(() => {
-          navigate("/volunteer/info"); // أو أي مسار آخر تريده بعد تسجيل الدخول
-        }, 1000);
+        navigate("/volunteer/info"); // أو أي مسار آخر تريده بعد تسجيل الدخول
       } else {
         setError("حدث خطأ أثناء تسجيل الدخول");
       }

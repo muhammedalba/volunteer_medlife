@@ -1,38 +1,42 @@
-import  { createContext, useState, useEffect, useContext } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 import Cookies from "universal-cookie";
-
 // إنشاء السياق
 const AuthContext = createContext(null);
 
 // مكون AuthProvider
 const AuthProvider = ({ children }) => {
+
   const cookies = new Cookies();
-  const [user, setUser] = useState(null);
+  const [volunteer, setVolunteer] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // تحميل بيانات المستخدم من الكوكيز عند التحميل الأولي
   useEffect(() => {
-    const token = cookies.get("access_token");
-    const userData = cookies.get("user");
+    const token = cookies.get("access_token", { path: "/" });
+    const volunteerData = cookies.get("volunteer", { path: "/" });
 
-    if (token && userData) {
-      setUser({ ...userData, token });
+    if (token && volunteerData) {
+      setVolunteer({ ...volunteerData, token });
       setIsAuthenticated(true);
     }
   }, []);
 
   const login = async (responseData) => {
     try {
-      const { user: userData, access_token } = responseData;
+      const { user, access_token } = responseData;
 
       // حفظ بيانات المستخدم والرمز في الكوكيز
       const expires = new Date();
       expires.setDate(expires.getDate() + 7); // انتهاء الصلاحية بعد أسبوع
 
-      cookies.set("access_token", access_token);
-      cookies.set("user", userData, { path: "/", expires });
+      cookies.set("access_token", access_token, { path: "/", expires });
+      cookies.set(
+        "volunteer",
+        { role: user.role, full_name: user.full_name, username: user.username },
+        { path: "/", expires }
+      );
 
-      setUser({ ...userData, token: access_token });
+      setVolunteer({ ...user, token: access_token });
       setIsAuthenticated(true);
 
       return true;
@@ -41,15 +45,20 @@ const AuthProvider = ({ children }) => {
       return false;
     }
   };
+  // update volunteer
+  const updateVolunteer = (volunteerData) => {
+    setVolunteer(volunteerData);
+    console.log("volunteerData updated", volunteerData);
+  };
 
   const logout = () => {
     try {
       // حذف الكوكيز
       cookies.remove("access_token", { path: "/" });
-      cookies.remove("user", { path: "/" });
+      cookies.remove("volunteer", { path: "/" });
 
       // إعادة تعيين حالة المستخدم
-      setUser(null);
+      setVolunteer(null);
       setIsAuthenticated(false);
 
       return true;
@@ -60,9 +69,10 @@ const AuthProvider = ({ children }) => {
   };
 
   const value = {
-    user,
+    volunteer,
     isAuthenticated,
     login,
+    updateVolunteer,
     logout,
   };
 

@@ -23,8 +23,8 @@ export const publicRoutes = [
   
 ];
 
-// User Routes
-export const userRoutes = [
+// volunteer Routes
+export const volunteerRoutes = [
   {
     path: "/volunteer/Info",
     element: "Info",

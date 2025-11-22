@@ -1,4 +1,4 @@
-import React from "react";
+
 import EvaluationCard from "../EvaluationCard";
 
 const EvaluationsTab = ({ evaluations = [] }) => (

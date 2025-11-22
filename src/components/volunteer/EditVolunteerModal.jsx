@@ -53,12 +53,14 @@ const EditVolunteerModal = ({ isOpen, onClose, volunteer, onSave }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    console.log("formData", formData);
+
     try {
       const payload = Object.entries(formData).reduce((acc, [key, value]) => {
         if (value) acc[key] = value;
         return acc;
       }, {});
-
+      console.log("payload", payload);
       await onSave(payload);
       onClose();
     } catch (error) {

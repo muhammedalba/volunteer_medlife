@@ -9,7 +9,8 @@ import {
 } from "@/services/volunteerService";
 import Tabs from "@/components/common/Tabs";
 import VolunteerProfileCard from "@/components/volunteer/profile/VolunteerProfileCard";
-
+import Cookies from "universal-cookie";
+import { useAuth } from "@/contexts/AuthContext";
 // Tabs configuration
 const tabItems = [
   { id: "personal", label: "معلومات شخصية" },
@@ -21,11 +22,14 @@ const tabItems = [
 const { PersonalInfoTab, EvaluationsTab, RatingsTab, ComplaintsTab } = tabs;
 
 export default function Info() {
+  const { updateVolunteer } = useAuth();
   const [activeTab, setActiveTab] = useState("personal");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [volunteer, setVolunteer] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const cookies = new Cookies();
+
   useEffect(() => {
     const fetchVolunteerData = async () => {
       try {
@@ -57,7 +61,24 @@ export default function Info() {
           ...response.volunteer,
         }));
       }
+      // حفظ بيانات المستخدم والرمز في الكوكيز
+      const expires = new Date();
+      expires.setDate(expires.getDate() + 7);
 
+      cookies.set(
+        "volunteer",
+        {
+          role: response.volunteer.role,
+          full_name: response.volunteer.full_name,
+          username: response.volunteer.username,
+        },
+        { path: "/", expires }
+      );
+      updateVolunteer({
+        role: response.volunteer.role,
+        full_name: response.volunteer.full_name,
+        username: response.volunteer.username,
+      });
       return response;
     } catch (error) {
       console.error("Error updating volunteer:", error);
@@ -134,10 +155,16 @@ export default function Info() {
             <EvaluationsTab evaluations={volunteer.evaluations || []} />
           )}
           {activeTab === "ratings" && (
-            <RatingsTab ratings={volunteer.supervisor_ratings || []} />
+            <RatingsTab
+              ratings={volunteer.supervisor_ratings || []}
+              volunteerId={volunteer.id}
+            />
           )}
           {activeTab === "complaints" && (
-            <ComplaintsTab complaints={volunteer.complaints || []} />
+            <ComplaintsTab
+              complaints={volunteer.complaints || []}
+              volunteerId={volunteer.id}
+            />
           )}
         </div>
       </div>

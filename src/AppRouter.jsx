@@ -6,7 +6,7 @@ import {
   Outlet,
 } from "react-router-dom";
 import { useAuth } from "./contexts/AuthContext";
-import { userRoutes, publicRoutes } from "./routes/routes";
+import { publicRoutes, volunteerRoutes } from "./routes/routes";
 import Cookies from "universal-cookie";
 
 import Home from "./pages/Home";
@@ -31,13 +31,13 @@ const componentMap = {
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole }) => {
   const cookies = new Cookies();
-  const user = cookies.get("user");
-  if (!user) {
+  const volunteer = cookies.get("volunteer", { path: "/" });
+  if (!volunteer) {
     // Redirect to login if not authenticated
     return <Navigate to="/login" replace />;
   }
 
-  if (requiredRole && user.role !== requiredRole) {
+  if (requiredRole && volunteer.role !== requiredRole) {
     // Redirect to home if not authorized
     return <Navigate to="/" replace />;
   }
@@ -56,20 +56,20 @@ const AppRouter = () => {
     return <Route key={route.path} path={route.path} element={<Component />} />;
   };
 
-  const renderUserRoute = (route) => {
+  const renderVolunteerRoute = (route) => {
     const Component = componentMap[route.element];
     if (!Component) {
       console.error(`Component ${route.element} not found`);
       return null;
     }
-    // For User login and register, render without protection
+    // For volunteer login and register, render without protection
     if (route.path === "/login") {
       return (
         <Route key={route.path} path={route.path} element={<Component />} />
       );
     }
 
-    // For other User routes, add protection
+    // For other Volunteer routes, add protection
     return (
       <Route
         key={route.path}
@@ -104,8 +104,8 @@ const AppRouter = () => {
           {publicRoutes.map(renderPublicRoute)}
         </Route>
 
-        {/* User routes */}
-        {userRoutes.map(renderUserRoute)}
+        {/* Volunteer routes */}
+        {volunteerRoutes.map(renderVolunteerRoute)}
 
         {/* Catch all route */}
         <Route path="*" element={<NotFound />} />
