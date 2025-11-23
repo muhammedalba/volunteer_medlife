@@ -97,6 +97,7 @@ export default function Login() {
           err.response.data.message || "اسم المستخدم أو كلمة المرور غير صحيحة"
         );
         errorNotify(err.response.data.message);
+        console.log(err.response.data);
       } else {
         warnNotify("حدث خطأ في الاتصال بالخادم");
         setError("حدث خطأ في الاتصال بالخادم");
@@ -123,7 +124,7 @@ export default function Login() {
       >
         <div className="pointer-events-none  inset-0 rounded-2xl bg-gradient-to-br from-indigo-50/70 via-white to-purple-50/70 -z-10 relative" />
         <img
-          className=" rounded-full m-auto z-50 absolute top-[-25%] left-1/2 transform -translate-x-1/2"
+          className=" rounded-full m-auto z-10 absolute top-[-25%] left-1/2 transform -translate-x-1/2"
           src={logo}
           alt="logo"
           width={150}

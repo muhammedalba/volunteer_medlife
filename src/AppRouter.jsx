@@ -11,7 +11,6 @@ import Cookies from "universal-cookie";
 
 import Home from "./pages/Home";
 import Login from "./pages/public/Login";
-import About from "./pages/public/About";
 import NotFound from "./pages/public/NotFound";
 import Header from "./components/Header";
 import Footer from "./components/Footer/Footer";
@@ -24,7 +23,6 @@ const componentMap = {
   Home,
   Login,
   NotFound,
-  About,
   Info,
   EvaluationDetails,
 };

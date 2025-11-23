@@ -245,7 +245,7 @@ const RatingsTab = memo(({ ratings: initialRatings = [], volunteerId }) => {
                     <Motion.div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
                         {getIcon("star", "text-yellow-500")}
-                        <span className="text-md">تقييم المشرف {rating?.supervisor_user?.full_name}</span>
+                        <span className="text-md">تقييم المشرف : {rating?.supervisor_user?.full_name}</span>
                       </div>
                       {/* create at  */}
                       <span className="text-red-500 break-words text-sm ">

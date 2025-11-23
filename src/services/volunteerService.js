@@ -5,7 +5,9 @@ const cookies = new Cookies();
 
 // Create an axios instance with default config
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000/api",
+  baseURL:
+    import.meta.env.VITE_API_URL ??
+    "https://ivory-goat-545233.hostingersite.com/api",
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
