@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo, useCallback, memo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getEvaluationById } from "@/services/volunteerService";
-import EvaluationCard from "@/components/volunteer/EvaluationCard";
-import { Button } from "@/components/ui/button";
+import EvaluationCard from "../../components/volunteer/Evaluation/EvaluationCard";
+
 import {
   ArrowRight,
   ChevronRight,
@@ -13,7 +13,7 @@ import {
   BookOpen,
   Calendar,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import Preloader from "../../components/Preloader/Preloader";
 
 const EvaluationDetails = memo(() => {
@@ -102,32 +102,38 @@ const EvaluationDetails = memo(() => {
 
     return [
       {
-        icon: User,
+        icon: <User className="h-5 w-5" />,
+        color: "text-blue-500",
         label: "اسم المشرف",
         value: evaluation.supervisor?.full_name,
       },
       {
-        icon: User,
-        label: "اسم المستخدم",
-        value: evaluation.supervisor?.username,
+        icon: <BookOpen className="h-5 w-5" />,
+        color: "text-green-500",
+        label: "حالة الدراسة",
+        value: evaluation.supervisor?.study_status,
       },
       {
-        icon: University,
+        icon: <University className="h-5 w-5" />,
+        color: "text-purple-500",
         label: "الجامعة",
         value: evaluation.supervisor?.university,
       },
       {
-        icon: BookOpen,
+        icon: <BookOpen className="h-5 w-5" />,
+        color: "text-teal-500",
         label: "التخصص",
         value: evaluation.supervisor?.specialization,
       },
       {
-        icon: GraduationCap,
+        icon: <GraduationCap className="h-5 w-5" />,
+        color: "text-yellow-500",
         label: "الدرجة العلمية",
         value: evaluation.supervisor?.academic_degree,
       },
       {
-        icon: Calendar,
+        icon: <Calendar className="h-5 w-5" />,
+        color: "text-indigo-500",
         label: "سنة التخرج",
         value: evaluation.supervisor?.study_year,
       },
@@ -140,28 +146,28 @@ const EvaluationDetails = memo(() => {
 
   if (error) {
     return (
-      <motion.div
+      <Motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-red-50 to-red-100 text-center"
       >
         <p className="text-red-600 text-lg font-semibold mb-4">{error}</p>
-        <motion.button
+        <Motion.button
           whileHover={buttonHover}
           whileTap={{ scale: 0.95 }}
           onClick={handleGoBack}
           className="px-6 py-3 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-colors duration-300 flex items-center"
         >
-          <ArrowRight className="ml-2 h-5 w-5" />
+          <ArrowRight className="ml-2 h-5 w-5 text-white" />
           العودة
-        </motion.button>
-      </motion.div>
+        </Motion.button>
+      </Motion.div>
     );
   }
 
   if (!evaluation) {
     return (
-      <motion.div
+      <Motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-gray-50 to-gray-100 text-center"
@@ -169,21 +175,21 @@ const EvaluationDetails = memo(() => {
         <p className="text-gray-600 text-lg font-semibold mb-4">
           لم يتم العثور على التقييم المطلوب
         </p>
-        <motion.button
+        <Motion.button
           whileHover={buttonHover}
           whileTap={{ scale: 0.95 }}
           onClick={handleGoBack}
           className="px-6 py-3 bg-bgColor text-white rounded-lg shadow-md hover:bg-red-500 transition-colors duration-300 flex items-center"
         >
-          <ArrowRight className="ml-2 h-5 w-5" />
+          <ArrowRight className="ml-2 h-5 w-5 text-white" />
           العودة
-        </motion.button>
-      </motion.div>
+        </Motion.button>
+      </Motion.div>
     );
   }
 
   return (
-    <motion.div
+    <Motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -191,33 +197,33 @@ const EvaluationDetails = memo(() => {
       className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8"
     >
       <div className="max-w-6xl mx-auto">
-        <motion.div
+        <Motion.div
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
           className="mb-10 flex justify-between items-center"
         >
-          <motion.h1
+          <Motion.h1
             className="text-3xl font-bold text-gray-800"
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.3 }}
           >
             تفاصيل التقييم
-          </motion.h1>
-          <motion.button
+          </Motion.h1>
+          <Motion.button
             whileHover={buttonHover}
             whileTap={{ scale: 0.95 }}
             onClick={handleGoBack}
             className="group px-5 py-2.5 bg-bgColor hover:bg-red-500 text-gray-100  hover:text-gray-800 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex items-center"
           >
-            <ArrowRight className="ml-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+            <ArrowRight className="ml-2 h-4 w-4 text-white group-hover:-translate-x-1 transition-transform" />
             العودة إلى قائمة التقييمات
-          </motion.button>
-        </motion.div>
+          </Motion.button>
+        </Motion.div>
 
         <AnimatePresence mode="wait">
-          <motion.div
+          <Motion.div
             key={evaluation.id}
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -225,32 +231,32 @@ const EvaluationDetails = memo(() => {
             transition={{ duration: 0.5 }}
             className="space-y-10"
           >
-            <motion.div
+            <Motion.div
               whileHover={cardHover}
               className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200"
               variants={itemVariants}
             >
               <EvaluationCard evaluation={evaluation} />
-            </motion.div>
+            </Motion.div>
             {/* supervisor details */}
-            <motion.div
+            <Motion.div
               variants={containerVariants}
               initial="hidden"
               animate="visible"
               className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200"
             >
               <div className="p-8">
-                <motion.h2
+                <Motion.h2
                   variants={itemVariants}
                   className="text-2xl font-semibold text-gray-800 mb-8 pb-4 border-b border-gray-200 flex items-center"
                 >
-                  <User className="ml-3 h-6 w-6 bg-bgColor-600" />
+                  <User className="ml-3 h-6 w-6 text-bgColor" />
                   معلومات المشرف
-                </motion.h2>
+                </Motion.h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {supervisorInfo.map((item, index) => (
-                    <motion.div
+                    <Motion.div
                       key={index}
                       variants={itemVariants}
                       whileHover={{ scale: 1.02, backgroundColor: "#f8fafc" }}
@@ -258,7 +264,7 @@ const EvaluationDetails = memo(() => {
                     >
                       <div className="">
                         <div className="flex items-center gap-2">
-                          <item.icon className="h-5 w-5 text-bgColor" />
+                          <div className={item.color}>{item.icon}</div>
                           <h3 className="text-sm font-medium text-gray-500">
                             {item.label}
                           </h3>
@@ -267,16 +273,16 @@ const EvaluationDetails = memo(() => {
                           {item.value || "غير متوفر"}
                         </p>
                       </div>
-                    </motion.div>
+                    </Motion.div>
                   ))}
                 </div>
               </div>
-            </motion.div>
+            </Motion.div>
             {/* supervisor details   */}
-          </motion.div>
+          </Motion.div>
         </AnimatePresence>
       </div>
-    </motion.div>
+    </Motion.div>
   );
 });
 

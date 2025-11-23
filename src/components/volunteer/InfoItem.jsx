@@ -9,10 +9,12 @@ import React, { memo, useMemo } from "react";
  */
 
 const InfoItem = memo(function InfoItem({ label, value, className = "" }) {
-  const displayValue = value !== undefined && value !== null && value !== "" ? value : "N/A";
+  const displayValue =
+    value !== undefined && value !== null && value !== "" ? value : "N/A";
 
   const containerClasses = useMemo(
-    () => `flex flex-col sm:flex-row sm:items-center py-2 border-b border-gray-100 last:border-0 ${className}`,
+    () =>
+      `flex flex-col sm:flex-row sm:items-center py-2 border-b border-gray-100 last:border-0 ${className}`,
     [className]
   );
 

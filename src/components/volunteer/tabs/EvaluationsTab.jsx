@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getEvaluations } from "@/services/volunteerService";
-import EvaluationCard from "../EvaluationCard";
+import EvaluationCard from "../Evaluation/EvaluationCard";
 import Preloader from "../../../components/Preloader/Preloader";
 import { errorNotify } from "../../../utils/Toast";
 

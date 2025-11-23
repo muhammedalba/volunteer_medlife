@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+// import "react-toastify/dist/ReactToastify.css";
 import { EditVolunteerModal, tabs } from "@/components/volunteer";
 import Preloader from "@/components/Preloader/Preloader";
 import {
@@ -8,7 +8,7 @@ import {
   getVolunteerInfo,
 } from "@/services/volunteerService";
 import Tabs from "@/components/common/Tabs";
-import VolunteerProfileCard from "@/components/volunteer/profile/VolunteerProfileCard";
+import VolunteerProfileCard from "@/components/volunteer/VolunteerProfileCard";
 import Cookies from "universal-cookie";
 import { useAuth } from "@/contexts/AuthContext";
 // Tabs configuration
@@ -29,6 +29,7 @@ export default function Info() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const cookies = new Cookies();
+
 
   useEffect(() => {
     const fetchVolunteerData = async () => {

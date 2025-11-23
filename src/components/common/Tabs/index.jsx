@@ -22,7 +22,7 @@ TabButton.propTypes = {
 
 const Tabs = ({ activeTab, onTabChange, tabs }) => (
   <div className="border-b border-gray-200 mb-6">
-    <nav className="-mb-px flex ">
+    <nav className="-mb-px flex flex-wrap justify-between sm:justify-start ">
       {tabs.map((tab) => (
         <TabButton
           key={tab.id}

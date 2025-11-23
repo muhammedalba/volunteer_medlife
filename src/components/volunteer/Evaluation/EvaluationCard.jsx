@@ -1,6 +1,16 @@
 import React, { memo, useMemo, useCallback } from "react";
 import { motion as _motion } from "framer-motion";
-import { AlertCircle, Award, Info } from "lucide-react";
+import {
+  AlertCircle,
+  Award,
+  Info,
+  TrendingUp,
+  FileText,
+  Zap,
+  Calendar,
+  User,
+  Star,
+} from "lucide-react";
 
 const EvaluationCard = memo(({ evaluation }) => {
   const container = useMemo(
@@ -88,25 +98,25 @@ const EvaluationCard = memo(({ evaluation }) => {
   const scoreItems = useMemo(
     () => [
       {
-        emoji: "📈",
+        icon: <TrendingUp className="h-5 w-5 text-blue-500" />,
         label: "التقييم الأولي",
         value: evaluation.initial_score,
         key: "initial",
       },
       {
-        emoji: "📈",
+        icon: <TrendingUp className="h-5 w-5 text-purple-500" />,
         label: "التقييم الشهري",
         value: evaluation.monthly_score,
         key: "monthly",
       },
       {
-        emoji: "📝",
+        icon: <FileText className="h-5 w-5 text-green-500" />,
         label: "تقييم عدد البوستات / الحملات",
         value: evaluation.posts_score,
         key: "posts",
       },
       {
-        emoji: "⚡",
+        icon: <Zap className="h-5 w-5 text-yellow-500" />,
         label: "تقييم النشاط",
         value: evaluation.activity_score,
         key: "activity",
@@ -147,7 +157,7 @@ const EvaluationCard = memo(({ evaluation }) => {
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.15 }}
               >
-                <span className="text-3xl">🌟</span>
+                <Star className="h-6 w-6 text-yellow-300" />
                 <span>{evaluation.team_name || "اسم الخلية غير متوفر"}</span>
               </_motion.h3>
               <_motion.p
@@ -156,7 +166,7 @@ const EvaluationCard = memo(({ evaluation }) => {
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.25 }}
               >
-                <span>📅</span>
+                <Calendar className="h-4 w-4 text-white/80" />
                 <span>
                   تاريخ التقييم: {formatDate(evaluation.evaluation_date)}
                 </span>
@@ -168,7 +178,7 @@ const EvaluationCard = memo(({ evaluation }) => {
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <span>👤</span>
+                  <User className="h-4 w-4 text-white/80" />
                   <span>اسم المشرف: {evaluation.supervisor_name}</span>
                 </_motion.p>
               )}
@@ -222,9 +232,9 @@ const EvaluationCard = memo(({ evaluation }) => {
                 className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col gap-2"
               >
                 <p className="text-sm text-gray-800 flex items-center gap-2">
-                  <span className="text-lg">{item.emoji}</span>
+                  {item.icon}
                   <span>{item.label} </span>
-                  <span> ({item.value}/5)</span>
+                  <span className="text-gray-600">({item.value}/5)</span>
                 </p>
                 <div className="flex items-center justify-between mt-1">
                   {renderStars(item.value)}
@@ -279,7 +289,7 @@ const EvaluationCard = memo(({ evaluation }) => {
           </_motion.div>
         </div>
       </_motion.div>
-      {/* <div className="absolute -z-10 inset-0 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" /> */}
+      <div className="absolute -z-10 inset-0 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
     </_motion.div>
   );
 });

@@ -1,201 +1,272 @@
-import React, { useState } from "react";
-import { motion as _motion } from "framer-motion";
-import { toast } from "react-toastify";
+import React, { useState, useCallback, useMemo, memo } from "react";
+import { motion as Motion, AnimatePresence } from "framer-motion";
+import { successNotify, errorNotify } from "../../../utils/Toast";
 import { submitComplaint } from "@/services/volunteerService";
+import { X, MessageSquare, Clock, CheckCircle } from "lucide-react";
 
-const ComplaintsTab = ({ complaints = [], volunteerId }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [content, setContent] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const ComplaintsTab = memo(
+  ({ complaints = [], volunteerId, onComplaintAdded }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [content, setContent] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const listContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
+    const animationVariants = useMemo(
+      () => ({
+        listContainer: {
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.08,
+            },
+          },
+        },
+        listItem: {
+          hidden: { opacity: 0, y: 10 },
+          visible: {
+            opacity: 1,
+            y: 0,
+          },
+        },
+        modal: {
+          hidden: { opacity: 0, scale: 0.9, y: 10 },
+          visible: { opacity: 1, scale: 1, y: 0 },
+          exit: { opacity: 0, scale: 0.9, y: 10 },
+        },
+        overlay: {
+          hidden: { opacity: 0 },
+          visible: { opacity: 1 },
+          exit: { opacity: 0 },
+        },
+      }),
+      []
+    );
+
+    const handleSubmit = useCallback(
+      async (e) => {
+        e.preventDefault();
+        if (!content.trim()) return;
+
+        setIsSubmitting(true);
+        try {
+          await submitComplaint({
+            content: content.trim(),
+            volunteer_id: volunteerId,
+          });
+
+          successNotify("تم إرسال الشكوى بنجاح");
+          setContent("");
+          setIsModalOpen(false);
+
+          // Use callback instead of window.reload
+          if (onComplaintAdded) {
+            onComplaintAdded();
+          }
+        } catch (error) {
+          errorNotify("فشل في إرسال الشكوى");
+          console.error("Error submitting complaint:", error);
+        } finally {
+          setIsSubmitting(false);
+        }
       },
-    },
-  };
+      [content, volunteerId, onComplaintAdded]
+    );
 
-  const listItem = {
-    hidden: { opacity: 0, y: 10 },
-    visible: {
-      opacity: 1,
-      y: 0,
-    },
-  };
+    const openModal = useCallback(() => setIsModalOpen(true), []);
+    const closeModal = useCallback(() => setIsModalOpen(false), []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!content.trim()) return;
+    const handleContentChange = useCallback(
+      (e) => setContent(e.target.value),
+      []
+    );
 
-    setIsSubmitting(true);
-    try {
-      await submitComplaint({
-        content: content.trim(),
-        volunteer_id: volunteerId,
-      });
+    const isSubmitDisabled = !content.trim() || isSubmitting;
 
-      toast.success("تم إرسال الشكوى بنجاح");
-      setContent("");
-      setIsModalOpen(false);
-      window.location.reload(); // Refresh to show the new complaint
-    } catch (error) {
-      toast.error("فشل في إرسال الشكوى");
-      console.error("Error submitting complaint:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <_motion.div
-      className="space-y-6"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="flex justify-end">
-        <_motion.button
-          whileHover={{ y: -2, scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={() => setIsModalOpen(true)}
-          className="px-4 py-2 bg-bgColor text-white rounded-md hover:bg-red-400 transition-colors flex items-center shadow-sm"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 ml-1"
-            viewBox="0 0 20 20"
-            fill="currentColor"
+    return (
+      <Motion.div
+        className="space-y-6"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold text-gray-800 flex items-center">
+            <MessageSquare className="ml-2 h-5 w-5 text-bgColor" />
+            الشكاوى ({complaints.length})
+          </h2>
+          <Motion.button
+            whileHover={{ y: -2, scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={openModal}
+            className="px-4 py-2 bg-bgColor text-white rounded-lg hover:bg-red-400 transition-colors flex items-center shadow-sm hover:shadow-md"
           >
-            <path
-              fillRule="evenodd"
-              d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 01-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-              clipRule="evenodd"
-            />
-          </svg>
-          إضافة شكوى جديدة
-        </_motion.button>
-      </div>
-
-      {/* Complaint Form Modal */}
-      {isModalOpen && (
-        <_motion.div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <_motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-            className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl"
-          >
-            <h3 className="text-lg font-medium mb-4">إضافة شكوى جديدة</h3>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <textarea
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                  rows="4"
-                  placeholder="اكتب شكواك هنا..."
-                  required
-                ></textarea>
-              </div>
-              <div className="flex justify-end space-x-2">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md"
-                  disabled={isSubmitting}
-                >
-                  إلغاء
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-bgColor text-white rounded-md hover:bg-red-500 disabled:opacity-50 flex items-center"
-                  disabled={isSubmitting || !content.trim()}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <svg
-                        className="  animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      <span className="mx-2"> جاري الإرسال...</span>
-                    </>
-                  ) : (
-                    "إرسال الشكوى"
-                  )}
-                </button>
-              </div>
-            </form>
-          </_motion.div>
-        </_motion.div>
-      )}
-
-      {/* Complaints List */}
-      {complaints.length > 0 ? (
-        <_motion.div
-          className="space-y-4"
-          variants={listContainer}
-          initial="hidden"
-          animate="visible"
-        >
-          {complaints.map((complaint) => (
-            <_motion.div
-              key={complaint.id}
-              variants={listItem}
-              className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      complaint.status === "pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-green-100 text-green-800"
-                    }`}
-                  >
-                    {complaint.status === "pending"
-                      ? "قيد الانتظار"
-                      : "تمت المعالجة"}
-                  </span>
-                  <p className="mt-2 text-gray-700">{complaint.content}</p>
-                </div>
-                <span className="text-sm text-gray-500 whitespace-nowrap">
-                  {new Date(complaint.created_at).toLocaleDateString("ar-EG")}
-                </span>
-              </div>
-            </_motion.div>
-          ))}
-        </_motion.div>
-      ) : (
-        <div className="text-center py-12 bg-white rounded-xl shadow">
-          <p className="text-gray-500">لا توجد شكاوى</p>
+            <MessageSquare className="ml-2 h-4 w-4" />
+            إضافة شكوى جديدة
+          </Motion.button>
         </div>
-      )}
-    </_motion.div>
-  );
-};
+
+        {/* Complaint Form Modal */}
+        <AnimatePresence>
+          {isModalOpen && (
+            <Motion.div
+              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+              variants={animationVariants.overlay}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={closeModal}
+            >
+              <Motion.div
+                variants={animationVariants.modal}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                transition={{ duration: 0.2 }}
+                className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    إضافة شكوى جديدة
+                  </h3>
+                  <button
+                    onClick={closeModal}
+                    className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                    disabled={isSubmitting}
+                  >
+                    <X className="h-5 w-5 text-gray-500" />
+                  </button>
+                </div>
+                <form onSubmit={handleSubmit}>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      محتوى الشكوى
+                    </label>
+                    <textarea
+                      value={content}
+                      onChange={handleContentChange}
+                      className="w-full p-3 rounded-lg focus:ring-1 focus:ring-red-500 resize-none transition-all outline-none border-1 border-red-300 "
+                      rows="4"
+                      placeholder="اكتب شكواك هنا..."
+                      required
+                      disabled={isSubmitting}
+                    />
+                    <div className="mt-1 text-xs text-gray-500 text-left">
+                      {content.length}/500 حرف
+                    </div>
+                  </div>
+                  <div className="flex justify-end space-x-3 space-x-reverse">
+                    <button
+                      type="button"
+                      onClick={closeModal}
+                      className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+                      disabled={isSubmitting}
+                    >
+                      إلغاء
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-bgColor text-white rounded-lg hover:bg-red-500 disabled:opacity-50 flex items-center transition-colors disabled:cursor-not-allowed"
+                      disabled={isSubmitDisabled}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <svg
+                            className="animate-spin -ml-1 ml-2 h-4 w-4 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          جاري الإرسال...
+                        </>
+                      ) : (
+                        "إرسال الشكوى"
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </Motion.div>
+            </Motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Complaints List */}
+        {complaints.length > 0 ? (
+          <Motion.div
+            className="space-y-4"
+            variants={animationVariants.listContainer}
+            initial="hidden"
+            animate="visible"
+          >
+            {complaints.map((complaint) => (
+              <Motion.div
+                key={complaint.id}
+                variants={animationVariants.listItem}
+                className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-6 border border-gray-100"
+              >
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-3">
+                      {complaint.status === "pending" ? (
+                        <div className="flex items-center px-3 py-1 bg-yellow-50 text-yellow-700 rounded-full text-sm font-medium">
+                          <Clock className="ml-1 h-3 w-3" />
+                          قيد الانتظار
+                        </div>
+                      ) : (
+                        <div className="flex items-center px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+                          <CheckCircle className="ml-1 h-3 w-3" />
+                          تمت المعالجة
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-gray-700 leading-relaxed">
+                      {complaint.content}
+                    </p>
+                  </div>
+                  <div className="text-sm text-gray-500 whitespace-nowrap mr-4">
+                    {new Date(complaint.created_at).toLocaleDateString(
+                      "ar-EG",
+                      {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      }
+                    )}
+                  </div>
+                </div>
+              </Motion.div>
+            ))}
+          </Motion.div>
+        ) : (
+          <Motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-16 bg-white rounded-xl shadow-sm border border-gray-100"
+          >
+            <MessageSquare className="mx-auto h-12 w-12 text-gray-300 mb-4" />
+            <p className="text-gray-500 text-lg">لا توجد شكاوى</p>
+            <p className="text-gray-400 text-sm mt-1">كن أول من يضيف شكوى</p>
+          </Motion.div>
+        )}
+      </Motion.div>
+    );
+  }
+);
+
+ComplaintsTab.displayName = "ComplaintsTab";
 
 export default ComplaintsTab;
