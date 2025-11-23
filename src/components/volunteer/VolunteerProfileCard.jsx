@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import { motion as _MOTION } from 'framer-motion';
 
 const VolunteerProfileCard = ({ volunteer, onEditClick }) => {
+  console.log(volunteer,"volunteer");
+  
   return (
     <_MOTION.div
       className="relative bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-8 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
@@ -17,7 +19,7 @@ const VolunteerProfileCard = ({ volunteer, onEditClick }) => {
           <div className="flex justify-between items-start gap-4">
             <div>
               <div className="uppercase tracking-wide text-xs sm:text-sm text-bgColor font-semibold">
-                رقم المتطوع: {volunteer.id}
+                اسم المستخدم : {volunteer.username}
               </div>
               <h2 className="mt-2 text-xl sm:text-2xl font-bold text-gray-900">
                 {volunteer.full_name}
@@ -25,7 +27,7 @@ const VolunteerProfileCard = ({ volunteer, onEditClick }) => {
             </div>
             <button
               onClick={onEditClick}
-              className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full text-bgColor bg-bgColor/10 hover:bg-bgColor/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bgColor transition-colors duration-200"
+              className="inline-flex items-center px-3 py-1.5 border text-md font-medium rounded-full text-bgColor  hover:bg-red-200/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bgColor transition-colors duration-200 "
             >
               <svg
                 className="h-4 w-4 ml-1"

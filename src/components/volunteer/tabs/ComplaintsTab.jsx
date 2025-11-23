@@ -98,7 +98,7 @@ const ComplaintsTab = memo(
             whileHover={{ y: -2, scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
             onClick={openModal}
-            className="px-4 py-2 bg-bgColor text-white rounded-lg hover:bg-red-400 transition-colors flex items-center shadow-sm hover:shadow-md"
+            className="px-4 py-2 bg-bgColor text-white rounded-xl hover:bg-red-400 transition-colors flex items-center shadow-sm hover:shadow-md"
           >
             <MessageSquare className="ml-2 h-4 w-4" />
             إضافة شكوى جديدة

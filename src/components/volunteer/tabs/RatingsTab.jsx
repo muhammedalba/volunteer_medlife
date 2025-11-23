@@ -327,7 +327,7 @@ const RatingsTab = memo(({ ratings: initialRatings = [], volunteerId }) => {
       {/* Add Rating Modal */}
       <Dialog open={isRatingModalOpen} onOpenChange={setIsRatingModalOpen}>
         <DialogContent className="sm:max-w-[625px] bg-white shadow-2xl rounded-2xl overflow-hidden">
-          <DialogHeader className="relative bg-gradient-to-r from-bgColor to-red-200 text-white p-6 rounded-xl">
+          <DialogHeader className=" flex items-center justify-center relative bg-gradient-to-r from-bgColor to-red-300 text-white p-3 sm:p-6 rounded-xl">
             <Motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -335,7 +335,7 @@ const RatingsTab = memo(({ ratings: initialRatings = [], volunteerId }) => {
               className="flex items-center justify-center"
             >
               {getIcon("plus", "text-white")}
-              <DialogTitle className="text-xl font-bold text-center mr-2">
+              <DialogTitle className="text-md sm:text-lg font-bold text-center mr-2">
                 إضافة تقييم جديد
               </DialogTitle>
             </Motion.div>
