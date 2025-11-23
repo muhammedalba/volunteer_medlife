@@ -31,6 +31,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isDemoMode, setIsDemoMode] = useState(false);
 
   const pageVariants = {
     hidden: { opacity: 0 },
@@ -69,9 +70,27 @@ export default function Login() {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<FormData>({
     resolver: yupResolver(loginSchema),
+    defaultValues: {
+      username: isDemoMode ? "volunteer2" : "",
+      password: isDemoMode ? "password123" : "",
+    },
   });
+
+  // Update form values when demo mode changes
+  const toggleDemoMode = () => {
+    const newDemoMode = !isDemoMode;
+    setIsDemoMode(newDemoMode);
+    if (newDemoMode) {
+      setValue("username", "volunteer2");
+      setValue("password", "password123");
+    } else {
+      setValue("username", "");
+      setValue("password", "");
+    }
+  };
 
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
@@ -164,6 +183,24 @@ export default function Login() {
         )}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          {/* Demo Mode Toggle */}
+          <Motion.div
+            className="flex items-center justify-center"
+            variants={fieldItemVariants}
+          >
+            <label className="flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isDemoMode}
+                onChange={toggleDemoMode}
+                className="ml-2 w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500"
+              />
+              <span className="text-sm text-gray-600">
+                وضع التجريب (تعبئة تلقائية)
+              </span>
+            </label>
+          </Motion.div>
+
           <Motion.div
             className="space-y-4"
             variants={fieldsContainerVariants}
@@ -176,6 +213,7 @@ export default function Login() {
                 type="text"
                 icon={User}
                 iconColor="text-blue-500"
+                placeholder="اسم المستخدم"
                 {...register("username")}
               />
             </Motion.div>
@@ -186,6 +224,7 @@ export default function Login() {
                 type="password"
                 icon={Lock}
                 iconColor="text-red-500"
+                placeholder="كلمة المرور"
                 {...register("password")}
               />
             </Motion.div>

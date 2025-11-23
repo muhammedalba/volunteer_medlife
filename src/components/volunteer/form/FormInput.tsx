@@ -41,7 +41,7 @@ const FormInput = React.forwardRef<
   ) => {
     const baseClassName =
       className ||
-      "w-full px-4 py-3 border-0 bg-gray-50 rounded-xl focus:outline-none focus:ring-1 focus:ring-red-300 focus:bg-white transition-all duration-200 placeholder-gray-400 text-gray-700 shadow-sm hover:shadow-md";
+      "w-full px-4 py-3 border-0 bg-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-red-300 focus:bg-white transition-all duration-200 placeholder-gray-400 text-gray-700 shadow-sm hover:shadow-md";
 
     // Filter props for each element type
     const commonProps = {
