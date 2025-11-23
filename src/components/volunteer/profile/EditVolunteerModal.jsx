@@ -116,15 +116,15 @@ const EditVolunteerModal = memo(({ isOpen, onClose, volunteer, onSave }) => {
           animate="visible"
           exit="exit"
         >
-          <DialogHeader className="relative bg-gradient-to-r from-bgColor to-red-200 text-white p-6 rounded-xl">
+          <DialogHeader className="relative bg-gradient-to-r from-bgColor to-red-200 text-white p-3 sm:p-6 rounded-xl">
             <div className="flex items-center justify-center">
               <Edit3 className="mr-3 h-6 w-6" />
-              <DialogTitle className="text-xl font-bold text-center">
+              <DialogTitle className="text-md sm:text-lg font-bold text-center">
                 تعديل بيانات المتطوع
               </DialogTitle>
             </div>
-            <div className="absolute left-4 top-4">
-              <User className="h-8 w-8 opacity-75" />
+            <div className="absolute left-4 top-2 sm:top-4">
+              <User className="h-6 w-6 opacity-75" />
             </div>
           </DialogHeader>
 

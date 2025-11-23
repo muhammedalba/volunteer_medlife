@@ -23,10 +23,9 @@ export const successNotify = (success) => {
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
-
     theme: "light",
     transition: Bounce,
-    progressClassName: "bgColor",
+    progressClassName: "Toast_progress_bar",
   });
 };
 
