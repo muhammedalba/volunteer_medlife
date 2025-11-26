@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import AppRouter from "./AppRouter";
 import { AuthProvider } from "./contexts/AuthContext";
+import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 
 function App() {
   useEffect(() => {
@@ -8,9 +9,8 @@ function App() {
   }, []);
   return (
     <AuthProvider>
-    
-        <AppRouter />
-
+      <ScrollToTop />
+      <AppRouter />
     </AuthProvider>
   );
 }
