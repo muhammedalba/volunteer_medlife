@@ -24,6 +24,7 @@ const STUDY_STATUSES = [
   { value: "Studying", label: "يُدرس حالياً" },
   { value: "Graduated", label: "خريج" },
   { value: "Postponed", label: "مؤجل" },
+  { value: "resident", label: "مقيم" },
 ];
 
 const EditVolunteerForm = ({

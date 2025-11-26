@@ -49,7 +49,7 @@ const Footer = () => {
             <ul className="space-y-2 text-sm">
               <li className="hover:text-textColor transition">
                 <a
-                  href="https://medlife.hurufy.com/"
+                  href="https://http://medlifesy.org/"
                   className="flex items-center justify-start gap-x-2"
                 >
                   <span>
@@ -59,7 +59,7 @@ const Footer = () => {
                       height="22"
                     />
                   </span>
-                  medlife.hurufy.com
+                  medlifesy.org
                 </a>
               </li>
               <li className="hover:text-textColor transition">
@@ -74,14 +74,14 @@ const Footer = () => {
                 </a>
               </li>
               <li className="hover:text-textColor transition">
-                <a
+                <a 
                   href="tel:+963998942124"
                   className="flex items-center justify-start gap-x-2"
                 >
                   <span>
                     <Icon icon="iconamoon:phone-thin" width="22" height="22" />
                   </span>
-                  0963998942124
+                <span dir="ltr">  (+963) 998942124</span>
                 </a>
               </li>
             </ul>
@@ -97,7 +97,7 @@ const Footer = () => {
             </span>
             <div className="flex items-center gap-2">
               <a
-                href="https://medlife.hurufy.com/"
+                href="https://http://medlifesy.org/"
                 target="_blank"
                 rel="noreferrer"
                 className="hover:text-textColor transition"

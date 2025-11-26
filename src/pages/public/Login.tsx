@@ -149,9 +149,11 @@ export default function Login() {
           width={150}
         />
         <div>
-          <h2 className="mt-1 text-center text-3xl font-extrabold text-gray-900">
-            اهلا بعوتك
-          </h2>
+          <div className="flex justify-center items-center gap-2">
+            <h2 className="mt-1 text-center text-3xl font-extrabold text-gray-900">
+              اهلا بعودتك 
+            </h2>
+          </div>
         </div>
 
         {error && (
