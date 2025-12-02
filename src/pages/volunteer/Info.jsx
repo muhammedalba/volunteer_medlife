@@ -71,14 +71,15 @@ export default function Info() {
         {
           role: response.volunteer.role,
           full_name: response.volunteer.full_name,
-          username: response.volunteer.username,
+          photo_path:response.volunteer.photo_path,
+          
         },
         { path: "/", expires }
       );
       updateVolunteer({
         role: response.volunteer.role,
         full_name: response.volunteer.full_name,
-        username: response.volunteer.username,
+        photo_path:response.volunteer.photo_path,
       });
       return response;
     } catch (error) {
@@ -104,7 +105,7 @@ export default function Info() {
           <p className="text-lg">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+            className="mt-4 px-4 py-2 bg-bgColor text-white rounded-md hover:bg-red-700"
           >
             إعادة المحاولة
           </button>

@@ -17,7 +17,7 @@ import Footer from "./components/Footer/Footer";
 // /volunteer
 import Info from "./pages/volunteer/Info";
 import EvaluationDetails from "./pages/volunteer/EvaluationDetails";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from "react-toastify";
 // Component mapping
 const componentMap = {
   Home,
@@ -36,10 +36,10 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (requiredRole && volunteer.role !== requiredRole) {
-    // Redirect to home if not authorized
-    return <Navigate to="/" replace />;
-  }
+  // if (requiredRole && volunteer.role !== requiredRole) {
+  //   // Redirect to home if not authorized
+  //   return <Navigate to="/" replace />;
+  // }
 
   return children;
 };
@@ -89,7 +89,7 @@ const AppRouter = () => {
         v7_relativeSplatPath: true,
       }}
     >
-       <ToastContainer />
+      <ToastContainer />
       <Header />
       <Routes>
         {/* Public routes with header and footer */}

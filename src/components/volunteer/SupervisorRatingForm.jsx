@@ -297,7 +297,7 @@ const SupervisorRatingForm = memo(({ volunteerId, onSuccess }) => {
                   disabled={isLoadingSupervisors || !!supervisorsError}
                   options={supervisors.map((s) => ({
                     value: s.id,
-                    label: s.full_name || s.username,
+                    label: s.full_name ,
                   }))}
                   className="w-full"
                 />

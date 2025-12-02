@@ -14,16 +14,16 @@ const InfoItem = memo(function InfoItem({ label, value, className = "" }) {
 
   const containerClasses = useMemo(
     () =>
-      `flex flex-col sm:flex-row sm:items-center py-2 border-b border-gray-100 last:border-0 ${className}`,
+      `flex flex-col gap-2 sm:flex-row sm:items-center py-2 border-b border-gray-100 last:border-0 ${className}`,
     [className]
   );
 
   return (
     <div className={containerClasses}>
-      <span className="text-gray-600 font-medium w-40 flex-shrink-0">
-        {label}
+      <span className="text-gray-600 font-medium w-fit">
+        {label} :
       </span>
-      <span className="text-gray-800 break-words">{displayValue}</span>
+      <span className="text-gray-800 break-words"> {displayValue}</span>
     </div>
   );
 });

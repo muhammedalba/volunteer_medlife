@@ -32,7 +32,7 @@ const AuthProvider = ({ children }) => {
       cookies.set("access_token", access_token, { path: "/", expires });
       cookies.set(
         "volunteer",
-        { role: user.role, full_name: user.full_name, username: user.username },
+        { role: user.role, full_name: user.full_name},
         { path: "/", expires }
       );
 

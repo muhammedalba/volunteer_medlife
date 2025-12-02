@@ -16,19 +16,6 @@ import {
 import { VolunteerInfoCard, InfoItem } from "..";
 
 const PersonalInfoTab = memo(({ volunteer }) => {
-  // Memoize formatted data to prevent unnecessary recalculations
-  const formattedData = useMemo(
-    () => ({
-      birthDate: volunteer.birth_date
-        ? new Date(volunteer.birth_date).toLocaleDateString("ar-EG")
-        : "غير متوفر",
-      memberSince: volunteer.created_at
-        ? new Date(volunteer.created_at).toLocaleDateString("ar-EG")
-        : "غير متوفر",
-    }),
-    [volunteer.birth_date, volunteer.created_at]
-  );
-
   // Animation variants
   const containerVariants = useMemo(
     () => ({
@@ -106,21 +93,27 @@ const PersonalInfoTab = memo(({ volunteer }) => {
           title="المعلومات الشخصية"
           icon={getIcon("user", "text-blue-500")}
         >
-          <Motion.div variants={iconVariants} className="flex items-center">
+          <Motion.div
+            variants={iconVariants}
+            className="flex items-center  gap-2"
+          >
             {getIcon("user", "text-blue-500")}
             <InfoItem label="الاسم الكامل" value={volunteer.full_name} />
           </Motion.div>
-          <Motion.div variants={iconVariants} className="flex items-center">
-            {getIcon("mail", "text-green-600")}
-            <InfoItem label="اسم المستخدم" value={volunteer.username} />
-          </Motion.div>
-          <Motion.div variants={iconVariants} className="flex items-center">
+          <Motion.div
+            variants={iconVariants}
+            className="flex items-center gap-2"
+          >
             {getIcon("calendar", "text-blue-500")}
-            <InfoItem label="تاريخ الميلاد" value={formattedData.birthDate} />
+            <InfoItem label="تاريخ الميلاد" value={volunteer.dob} />
           </Motion.div>
-          <Motion.div variants={iconVariants} className="flex items-center">
+          <Motion.div variants={iconVariants} className="flex items-center gap-2">
             {getIcon("phone", "text-green-600")}
             <InfoItem label="رقم الهاتف" value={volunteer.phone} />
+          </Motion.div>
+          <Motion.div variants={iconVariants} className="flex items-center gap-2">
+            {getIcon("user", "text-purple-600")}
+            <InfoItem label="رقم الهوية" value={volunteer.national_id} />
           </Motion.div>
         </VolunteerInfoCard>
       </Motion.div>
@@ -130,26 +123,26 @@ const PersonalInfoTab = memo(({ volunteer }) => {
           title="المعلومات الأكاديمية"
           icon={getIcon("graduation", "text-purple-500")}
         >
-          <Motion.div variants={iconVariants} className="flex items-center">
+          <Motion.div variants={iconVariants} className="flex items-center gap-2">
             {getIcon("graduation", "text-purple-500")}
             <InfoItem label="الجامعة" value={volunteer.university} />
           </Motion.div>
-          <Motion.div variants={iconVariants} className="flex items-center">
+          <Motion.div variants={iconVariants} className="flex items-center gap-2">
             {getIcon("award", "text-yellow-500")}
+            <InfoItem label="المؤهل" value={volunteer.qualification} />
+          </Motion.div>
+          <Motion.div variants={iconVariants} className="flex items-center gap-2">
+            {getIcon("book", "text-green-500")}
             <InfoItem
-              label="الدرجة العلمية"
-              value={volunteer.academic_degree}
+              label="الحالة الأكاديمية"
+              value={volunteer.academic_status}
             />
           </Motion.div>
-          <Motion.div variants={iconVariants} className="flex items-center">
-            {getIcon("book", "text-green-500")}
-            <InfoItem label="حالة الدراسة" value={volunteer.study_status} />
-          </Motion.div>
-          <Motion.div variants={iconVariants} className="flex items-center">
+          <Motion.div variants={iconVariants} className="flex items-center gap-2">
             {getIcon("calendar", "text-indigo-500")}
-            <InfoItem label="سنة الدراسة" value={volunteer.study_year} />
+            <InfoItem label="السنة الدراسية" value={volunteer.academic_year} />
           </Motion.div>
-          <Motion.div variants={iconVariants} className="flex items-center">
+          <Motion.div variants={iconVariants} className="flex items-center gap-2">
             {getIcon("book", "text-teal-500")}
             <InfoItem label="التخصص" value={volunteer.specialization} />
           </Motion.div>
@@ -162,25 +155,18 @@ const PersonalInfoTab = memo(({ volunteer }) => {
           icon={getIcon("mapPin", "text-red-500")}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Motion.div variants={iconVariants} className="flex items-center">
+            <Motion.div variants={iconVariants} className="flex items-center gap-2">
               {getIcon("mapPin", "text-red-500")}
-              <InfoItem
-                label="العنوان العام"
-                value={volunteer.address_general}
-              />
+              <InfoItem label="المحافظة" value={volunteer.governorate} />
             </Motion.div>
-            <Motion.div variants={iconVariants} className="flex items-center">
+            <Motion.div
+              variants={iconVariants}
+              className="flex items-center gap-2"
+            >
               {getIcon("home", "text-orange-500")}
-              <InfoItem
-                label="تفاصيل العنوان"
-                value={volunteer.address_details}
-              />
+              <InfoItem label="العنوان" value={volunteer.address} />
             </Motion.div>
           </div>
-          <Motion.div variants={iconVariants} className="flex items-center">
-            {getIcon("clock", "text-cyan-500")}
-            <InfoItem label="عضو منذ" value={formattedData.memberSince} />
-          </Motion.div>
         </VolunteerInfoCard>
       </Motion.div>
 
@@ -190,17 +176,20 @@ const PersonalInfoTab = memo(({ volunteer }) => {
           icon={getIcon("handshake", "text-green-500")}
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Motion.div variants={iconVariants} className="flex items-center">
+            <Motion.div variants={iconVariants} className="flex items-center gap-2">
               {getIcon("mapPin", "text-pink-500")}
-              <InfoItem label="مكان التطوع" value={volunteer.volunteer_place} />
+              <InfoItem label="المستشفى" value={volunteer.hospital} />
             </Motion.div>
-            <Motion.div variants={iconVariants} className="flex items-center">
+            <Motion.div variants={iconVariants} className="flex items-center gap-2">
               {getIcon("book", "text-gray-600")}
-              <InfoItem label="ملاحظات عامة" value={volunteer.general_notes} />
+              <InfoItem label="ساعات العمل" value={volunteer.working_hours} />
             </Motion.div>
-            <Motion.div variants={iconVariants} className="flex items-center">
+            <Motion.div variants={iconVariants} className="flex items-center gap-2">
               {getIcon("clock", "text-cyan-500")}
-              <InfoItem label="عضو منذ" value={formattedData.memberSince} />
+              <InfoItem
+                label="تاريخ الانضمام"
+                value={volunteer.date_of_joining}
+              />
             </Motion.div>
           </div>
         </VolunteerInfoCard>

@@ -36,7 +36,7 @@ const Header = () => {
                   <>
                     <span className="text-textColor hidden sm:block">
                       مرحباً،
-                      <span>{volunteer?.full_name || volunteer?.username}</span>
+                      <span>{volunteer?.full_name }</span>
                     </span>
                     <_motion.button
                       type="button"

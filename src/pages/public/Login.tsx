@@ -15,11 +15,11 @@ import FormInput from "../../components/volunteer/form/FormInput.tsx";
 // تعريف مخطط التحقق من صحة البيانات
 const loginSchema = yup
   .object({
-    username: yup.string().required("اسم المستخدم مطلوب"),
+    full_name: yup.string().required("اسم المستخدم مطلوب"),
     password: yup
       .string()
       .required("حقل كلمة المرور مطلوب")
-      .min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل"),
+      .min(2, "كلمة المرور يجب أن تكون 6 أحرف على الأقل"),
   })
   .required();
 
@@ -74,8 +74,8 @@ export default function Login() {
   } = useForm<FormData>({
     resolver: yupResolver(loginSchema),
     defaultValues: {
-      username: isDemoMode ? "volunteer2" : "",
-      password: isDemoMode ? "password123" : "",
+      full_name: isDemoMode ? "آلاء وجيه الغفاري" : "",
+      password: isDemoMode ? "11" : "",
     },
   });
 
@@ -84,10 +84,10 @@ export default function Login() {
     const newDemoMode = !isDemoMode;
     setIsDemoMode(newDemoMode);
     if (newDemoMode) {
-      setValue("username", "volunteer2");
-      setValue("password", "password123");
+      setValue("full_name", "آلاء وجيه الغفاري");
+      setValue("password", "11");
     } else {
-      setValue("username", "");
+      setValue("full_name", "");
       setValue("password", "");
     }
   };
@@ -216,7 +216,7 @@ export default function Login() {
                 icon={User}
                 iconColor="text-blue-500"
                 placeholder="اسم المستخدم"
-                {...register("username")}
+                {...register("full_name")}
               />
             </Motion.div>
 

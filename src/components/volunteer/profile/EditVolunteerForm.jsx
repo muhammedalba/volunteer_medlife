@@ -1,4 +1,3 @@
-
 import {
   User,
   Calendar,
@@ -9,33 +8,46 @@ import {
   MapPin,
   Home,
   FileText,
+  Clock,
+  Building,
+  IdCard,
 } from "lucide-react";
 import FormInput from "../form/FormInput";
 import Button from "../Button";
+import PhotoUpload from "../form/PhotoUpload";
 
-const ACADEMIC_DEGREES = [
-  { value: "Bachelor", label: "بكالوريوس" },
-  { value: "Master", label: "ماجستير" },
-  { value: "PhD", label: "دكتوراه" },
-  { value: "Diploma", label: "دبلوم" },
+const ACADEMIC_STATUSES = [
+  { value: "طالب", label: "طالب" },
+  { value: "خريج", label: "خريج" },
+  { value: "مقيم", label: "مقيم" },
 ];
 
-const STUDY_STATUSES = [
-  { value: "Studying", label: "يُدرس حالياً" },
-  { value: "Graduated", label: "خريج" },
-  { value: "Postponed", label: "مؤجل" },
-  { value: "resident", label: "مقيم" },
+const WORKING_HOURS = [
+  { value: "صباحية فقط", label: "صباحية فقط" },
+  { value: "مسائية فقط", label: "مسائية فقط" },
+  { value: "صباحية ومسائية", label: "صباحية ومسائية" },
+  { value: "مرنة", label: "مرنة" },
 ];
 
 const EditVolunteerForm = ({
   formData,
   onChange,
+  onPhotoChange,
   onSubmit,
   onCancel,
   isSubmitting,
 }) => {
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form onSubmit={onSubmit} className="space-y-6">
+      {/* Photo Upload Section */}
+      <div className="flex justify-center">
+        <PhotoUpload
+          currentPhoto={formData.photo_preview}
+          onPhotoChange={onPhotoChange}
+        />
+      </div>
+
+      {/* Form Fields */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormInput
           label="الاسم الكامل"
@@ -47,60 +59,20 @@ const EditVolunteerForm = ({
 
         <FormInput
           label="تاريخ الميلاد"
-          name="birth_date"
+          name="dob"
           type="date"
           icon={Calendar}
           iconColor="text-blue-500"
-          value={formData.birth_date}
+          value={formData.dob}
           onChange={onChange}
         />
 
         <FormInput
-          label="الجامعة"
-          name="university"
-          icon={GraduationCap}
-          iconColor="text-purple-500"
-          value={formData.university}
-          onChange={onChange}
-        />
-
-        <FormInput
-          label="الدرجة العلمية"
-          name="academic_degree"
-          type="select"
-          icon={Award}
-          iconColor="text-yellow-500"
-          value={formData.academic_degree}
-          onChange={onChange}
-          options={ACADEMIC_DEGREES}
-        />
-
-        <FormInput
-          label="حالة الدراسة"
-          name="study_status"
-          type="select"
-          icon={BookOpen}
-          iconColor="text-green-500"
-          value={formData.study_status}
-          onChange={onChange}
-          options={STUDY_STATUSES}
-        />
-
-        <FormInput
-          label="سنة الدراسة"
-          name="study_year"
-          icon={Calendar}
-          iconColor="text-indigo-500"
-          value={formData.study_year}
-          onChange={onChange}
-        />
-
-        <FormInput
-          label="التخصص"
-          name="specialization"
-          icon={BookOpen}
-          iconColor="text-teal-500"
-          value={formData.specialization}
+          label="رقم الهوية"
+          name="national_id"
+          icon={IdCard}
+          iconColor="text-purple-600"
+          value={formData.national_id}
           onChange={onChange}
         />
 
@@ -115,44 +87,99 @@ const EditVolunteerForm = ({
         />
 
         <FormInput
-          label="العنوان العام"
-          name="address_general"
+          label="المحافظة"
+          name="governorate"
           icon={MapPin}
           iconColor="text-red-500"
-          value={formData.address_general}
+          value={formData.governorate}
           onChange={onChange}
         />
 
         <FormInput
-          label="تفاصيل العنوان"
-          name="address_details"
+          label="العنوان"
+          name="address"
           icon={Home}
           iconColor="text-orange-500"
-          value={formData.address_details}
+          value={formData.address}
           onChange={onChange}
         />
 
         <FormInput
-          label="مكان التطوع"
-          name="volunteer_place"
-          icon={MapPin}
-          iconColor="text-pink-500"
-          value={formData.volunteer_place}
+          label="المؤهل"
+          name="qualification"
+          icon={Award}
+          iconColor="text-yellow-500"
+          value={formData.qualification}
           onChange={onChange}
         />
 
-        <div className="md:col-span-2">
-          <FormInput
-            label="ملاحظات عامة"
-            name="general_notes"
-            type="textarea"
-            icon={FileText}
-            iconColor="text-gray-600"
-            value={formData.general_notes}
-            onChange={onChange}
-            rows="3"
-          />
-        </div>
+        <FormInput
+          label="الجامعة"
+          name="university"
+          icon={GraduationCap}
+          iconColor="text-purple-500"
+          value={formData.university}
+          onChange={onChange}
+        />
+
+        <FormInput
+          label="الحالة الأكاديمية"
+          name="academic_status"
+          type="select"
+          icon={BookOpen}
+          iconColor="text-green-500"
+          value={formData.academic_status}
+          onChange={onChange}
+          options={ACADEMIC_STATUSES}
+        />
+
+        <FormInput
+          label="السنة الدراسية"
+          name="academic_year"
+          icon={Calendar}
+          iconColor="text-indigo-500"
+          value={formData.academic_year}
+          onChange={onChange}
+        />
+
+        <FormInput
+          label="التخصص"
+          name="specialization"
+          icon={BookOpen}
+          iconColor="text-teal-500"
+          value={formData.specialization}
+          onChange={onChange}
+        />
+
+        <FormInput
+          label="المستشفى"
+          name="hospital"
+          icon={Building}
+          iconColor="text-pink-500"
+          value={formData.hospital}
+          onChange={onChange}
+        />
+
+        <FormInput
+          label="ساعات العمل"
+          name="working_hours"
+          type="select"
+          icon={Clock}
+          iconColor="text-cyan-500"
+          value={formData.working_hours}
+          onChange={onChange}
+          options={WORKING_HOURS}
+        />
+
+        <FormInput
+          label="تاريخ الانضمام"
+          name="date_of_joining"
+          type="date"
+          icon={Calendar}
+          iconColor="text-blue-600"
+          value={formData.date_of_joining}
+          onChange={onChange}
+        />
       </div>
 
       <div className="flex justify-between space-x-3 pt-4 border-t mt-6">

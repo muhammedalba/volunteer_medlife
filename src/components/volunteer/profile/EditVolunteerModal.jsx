@@ -13,17 +13,21 @@ const EditVolunteerModal = memo(({ isOpen, onClose, volunteer, onSave }) => {
   const initialFormData = useMemo(
     () => ({
       full_name: "",
-      birth_date: "",
-      university: "",
-      academic_degree: "",
-      study_status: "",
-      study_year: "",
-      specialization: "",
+      dob: "",
+      national_id: "",
       phone: "",
-      address_general: "",
-      address_details: "",
-      volunteer_place: "",
-      general_notes: "",
+      governorate: "",
+      address: "",
+      qualification: "",
+      university: "",
+      academic_year: "",
+      date_of_joining: "",
+      working_hours: "",
+      specialization: "",
+      hospital: "",
+      academic_status: "",
+      photo: null,
+      photo_preview: null,
     }),
     []
   );
@@ -36,19 +40,21 @@ const EditVolunteerModal = memo(({ isOpen, onClose, volunteer, onSave }) => {
     if (volunteer) {
       setFormData({
         full_name: volunteer.full_name || "",
-        birth_date: volunteer.birth_date
-          ? volunteer.birth_date.split("T")[0]
-          : "",
-        university: volunteer.university || "",
-        academic_degree: volunteer.academic_degree || "",
-        study_status: volunteer.study_status || "",
-        study_year: volunteer.study_year || "",
-        specialization: volunteer.specialization || "",
+        dob: volunteer.dob ? volunteer.dob.split("T")[0] : "",
+        national_id: volunteer.national_id || "",
         phone: volunteer.phone || "",
-        address_general: volunteer.address_general || "",
-        address_details: volunteer.address_details || "",
-        volunteer_place: volunteer.volunteer_place || "",
-        general_notes: volunteer.general_notes || "",
+        governorate: volunteer.governorate || "",
+        address: volunteer.address || "",
+        qualification: volunteer.qualification || "",
+        university: volunteer.university || "",
+        academic_year: volunteer.academic_year || "",
+        date_of_joining: volunteer.date_of_joining || "",
+        working_hours: volunteer.working_hours || "",
+        specialization: volunteer.specialization || "",
+        hospital: volunteer.hospital || "",
+        academic_status: volunteer.academic_status || "",
+        photo: null,
+        photo_preview: volunteer.photo_path ? `/${volunteer.photo_path}` : null,
       });
     } else {
       setFormData(initialFormData);
@@ -63,17 +69,51 @@ const EditVolunteerModal = memo(({ isOpen, onClose, volunteer, onSave }) => {
     }));
   }, []);
 
+  const handlePhotoChange = useCallback((file) => {
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prev) => ({
+          ...prev,
+          photo: file,
+          photo_preview: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        photo: null,
+        photo_preview: null,
+      }));
+    }
+  }, []);
+
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
       setIsSubmitting(true);
 
       try {
-        // Filter out empty values
-        const payload = Object.entries(formData).reduce((acc, [key, value]) => {
-          if (value && value.trim()) acc[key] = value;
-          return acc;
-        }, {});
+        // Create FormData for file upload
+        const payload = new FormData();
+
+        // Add all text fields
+        Object.entries(formData).forEach(([key, value]) => {
+          if (
+            key !== "photo" &&
+            key !== "photo_preview" &&
+            value &&
+            value.trim()
+          ) {
+            payload.append(key, value);
+          }
+        });
+
+        // Add photo file if exists
+        if (formData.photo) {
+          payload.append("photo", formData.photo);
+        }
 
         await onSave(payload);
         successNotify("تم تحديث بيانات المتطوع بنجاح");
@@ -132,6 +172,7 @@ const EditVolunteerModal = memo(({ isOpen, onClose, volunteer, onSave }) => {
             <EditVolunteerForm
               formData={formData}
               onChange={handleChange}
+              onPhotoChange={handlePhotoChange}
               onSubmit={handleSubmit}
               onCancel={onClose}
               isSubmitting={isSubmitting}
