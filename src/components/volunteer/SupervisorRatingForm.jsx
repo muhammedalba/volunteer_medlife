@@ -26,6 +26,7 @@ import {
 } from "@/services/volunteerService";
 import { successNotify, errorNotify } from "../../utils/Toast";
 import FormInput from "./form/FormInput";
+import SupervisorSearch from "./form/SupervisorSearch";
 import supervisorRatingSchema from "./validation/supervisorRatingSchema";
 import Stepper from "./Stepper";
 const steps = [
@@ -92,6 +93,8 @@ const SupervisorRatingForm = memo(({ volunteerId, onSuccess }) => {
     handleSubmit,
     formState: { errors },
     trigger,
+    setValue,
+    watch,
   } = useForm({
     resolver: yupResolver(supervisorRatingSchema),
     defaultValues,
@@ -173,6 +176,11 @@ const SupervisorRatingForm = memo(({ volunteerId, onSuccess }) => {
       { name: "management_behavior", label: "سلوك الإدارة", rows: 2 },
       { name: "pros_cons", label: "الإيجابيات والسلبيات", rows: 3 },
       { name: "space_given", label: "المساحة الممنوحة", rows: 2 },
+      {
+        name: "listening_and_suggestions",
+        label: "الاستماع والمقترحات ",
+        rows: 2,
+      },
     ],
     []
   );
@@ -182,8 +190,8 @@ const SupervisorRatingForm = memo(({ volunteerId, onSuccess }) => {
       setIsLoadingSupervisors(true);
       setSupervisorsError("");
       const data = await getSupervisors();
-      if (data?.status && Array.isArray(data.supervisors))
-        setSupervisors(data.supervisors);
+      console.log(data, "supervisor");
+      if (Array.isArray(data.supervisors)) setSupervisors(data.supervisors);
       else setSupervisors([]);
     } catch (error) {
       console.error("Error fetching supervisors:", error);
@@ -199,10 +207,10 @@ const SupervisorRatingForm = memo(({ volunteerId, onSuccess }) => {
   }, [fetchSupervisors]);
 
   const onSubmit = useCallback(
-    async (data) => {
+    async (data, supervisor_id) => {
       setIsSubmitting(true);
       try {
-        const response = await submitSupervisorRating(data);
+        const response = await submitSupervisorRating(data, supervisor_id);
         successNotify(response.message || "تم إرسال التقييم بنجاح");
         if (onSuccess) onSuccess(response.rating);
       } catch (error) {
@@ -289,37 +297,16 @@ const SupervisorRatingForm = memo(({ volunteerId, onSuccess }) => {
                 </p>
               </div>
               <div className="max-w-sm mx-auto">
-                <FormInput
-                  label="المشرف"
-                  name="supervisor_id"
-                  type="select"
-                  {...register("supervisor_id")}
-                  disabled={isLoadingSupervisors || !!supervisorsError}
-                  options={supervisors.map((s) => ({
-                    value: s.id,
-                    label: s.full_name ,
-                  }))}
-                  className="w-full"
+                <SupervisorSearch
+                  supervisors={supervisors}
+                  onSelect={(supervisorId) => {
+                    setValue("supervisor_id", supervisorId);
+                    trigger("supervisor_id");
+                  }}
+                  selectedId={watch("supervisor_id")}
+                  isLoading={isLoadingSupervisors}
+                  error={errors.supervisor_id?.message || supervisorsError}
                 />
-                {errors.supervisor_id && (
-                  <Motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-2 flex items-center text-sm text-red-600"
-                  >
-                    <AlertCircle className="ml-1 h-4 w-4 text-red-500" />
-                    {errors.supervisor_id.message}
-                  </Motion.div>
-                )}
-                {supervisorsError && (
-                  <Motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700"
-                  >
-                    {supervisorsError}
-                  </Motion.div>
-                )}
               </div>
             </Motion.div>
           )}

@@ -38,6 +38,8 @@ export default function Info() {
 
         if (response.volunteer) {
           setVolunteer(response.volunteer);
+          console.log(volunteer,'volunteer info');
+          
         }
       } catch (err) {
         console.error("Error fetching volunteer data:", err);

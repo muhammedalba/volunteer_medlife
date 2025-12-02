@@ -83,9 +83,9 @@ export const getSupervisors = async () => {
 };
 
 // Submit supervisor rating
-export const submitSupervisorRating = async (ratingData) => {
+export const submitSupervisorRating = async (ratingData,id) => {
   try {
-    const response = await api.post("/supervisor-ratings", {
+    const response = await api.post(`/supervisors/${id}/rate`, {
       supervisor_id: ratingData.supervisor_id,
       activity_score: ratingData.activity_score,
       behavior_score: ratingData.behavior_score,
