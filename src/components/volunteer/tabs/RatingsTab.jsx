@@ -273,7 +273,7 @@ const RatingsTab = memo(({ ratings: initialRatings = [], volunteerId }) => {
                               item.key.includes("tasks") ||
                               item.key.includes("general")
                                 ? 5
-                                : 10
+                                : 5
                             }`
                           : value || "غير متوفر";
 

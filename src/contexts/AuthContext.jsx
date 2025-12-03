@@ -48,7 +48,6 @@ const AuthProvider = ({ children }) => {
   // update volunteer
   const updateVolunteer = (volunteerData) => {
     setVolunteer(volunteerData);
-    console.log("volunteerData updated", volunteerData);
   };
 
   const logout = () => {

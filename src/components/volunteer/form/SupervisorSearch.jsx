@@ -145,7 +145,7 @@ const SupervisorSearch = ({
           }}
           onKeyDown={handleKeyDown}
           placeholder={`ابحث عن اسم المشرف (أدخل على الأقل ${minSearchLength} حروف)...`}
-          className={`w-full pr-10 pl-10 py-2 border rounded-lg focus:ring-2 focus:ring-bgColor focus:border-transparent transition-colors text-gray-700 focus:text-gray-700 ${
+          className={`w-full pr-10 pl-10 py-2 focus:outline-none border border-gry-700 rounded-2xl focus:ring-1 focus:ring-bgColor focus:border-transparent transition-colors text-gray-700 focus:text-gray-700 ${
             error ? "border-red-500" : "border-gray-300"
           } ${
             selectedSupervisor ? "bg-green-50 border-green-300" : "bg-white"

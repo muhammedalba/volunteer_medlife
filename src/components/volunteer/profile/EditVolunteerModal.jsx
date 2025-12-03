@@ -54,7 +54,9 @@ const EditVolunteerModal = memo(({ isOpen, onClose, volunteer, onSave }) => {
         hospital: volunteer.hospital || "",
         academic_status: volunteer.academic_status || "",
         photo: null,
-        photo_preview: volunteer.photo_path ? `/${volunteer.photo_path}` : null,
+        photo_preview: volunteer.photo_path
+          ? `${ import.meta.env.VITE_SERVER_URL}/storage/${volunteer.photo_path}`
+          : null,
       });
     } else {
       setFormData(initialFormData);
@@ -97,16 +99,14 @@ const EditVolunteerModal = memo(({ isOpen, onClose, volunteer, onSave }) => {
       try {
         // Create FormData for file upload
         const payload = new FormData();
+        payload.append("_method", "PUT");
+        // Define fields to exclude
+        const excludedFields = ["photo", "photo_preview"];
 
-        // Add all text fields
+        // Add all text fields efficiently
         Object.entries(formData).forEach(([key, value]) => {
-          if (
-            key !== "photo" &&
-            key !== "photo_preview" &&
-            value &&
-            value.trim()
-          ) {
-            payload.append(key, value);
+          if (!excludedFields.includes(key) && value?.trim()) {
+            payload.append(key, value.trim());
           }
         });
 

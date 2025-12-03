@@ -3,12 +3,11 @@ import PropTypes from "prop-types";
 import { motion as _MOTION } from "framer-motion";
 
 const VolunteerProfileCard = ({ volunteer, onEditClick }) => {
-  console.log(volunteer, "volunteer");
 
   const getPhotoUrl = (photoPath) => {
     if (!photoPath) return null;
-    // Assuming photos are stored in public folder or accessible via API
-    return `/${photoPath}`;
+
+    return `${ import.meta.env.VITE_SERVER_URL}/storage/${photoPath}`;
   };
 
   return (
@@ -33,7 +32,7 @@ const VolunteerProfileCard = ({ volunteer, onEditClick }) => {
                   e.target.onerror = null;
                   e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
                     volunteer.full_name
-                  )}&background=linear-gradient(135deg,%23667eea%200%,%23764ba2%20100%)&color=fff&size=128`;
+                  )}&background=6366f1&color=fff&size=128`;
                 }}
               />
               <div className="absolute bottom-0 right-0 w-6 h-6 bg-green-400 rounded-full border-2 border-white"></div>

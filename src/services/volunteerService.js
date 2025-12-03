@@ -34,13 +34,10 @@ export const loginVolunteer = async (data) => {
 };
 // Reusable PUT function
 export const updateVolunteerInfo = async (data) => {
-  const params = new URLSearchParams();
-  Object.entries(data).forEach(([key, value]) => {
-    if (value) params.append(key, value);
-  });
-
   try {
-    const response = await api.put(`/volunteer/info?${params.toString()}`, {});
+    const response = await api.post("/volunteer/info", data, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
 
     return response.data;
   } catch (error) {
@@ -54,6 +51,7 @@ export const updateVolunteerInfo = async (data) => {
 export const getVolunteerInfo = async () => {
   try {
     const response = await api.get("/volunteer/info");
+
     return response.data;
   } catch (error) {
     console.error("Error fetching volunteer info:", error);
@@ -83,7 +81,7 @@ export const getSupervisors = async () => {
 };
 
 // Submit supervisor rating
-export const submitSupervisorRating = async (ratingData,id) => {
+export const submitSupervisorRating = async (ratingData, id) => {
   try {
     const response = await api.post(`/supervisors/${id}/rate`, {
       supervisor_id: ratingData.supervisor_id,

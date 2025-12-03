@@ -172,6 +172,7 @@ const EditVolunteerForm = ({
         />
 
         <FormInput
+          disabled
           label="تاريخ الانضمام"
           name="date_of_joining"
           type="date"

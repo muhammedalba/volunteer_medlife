@@ -88,13 +88,6 @@ const PhotoUpload = ({
         onChange={handleFileSelect}
         className="hidden"
       />
-
-      {/* Instructions */}
-      <p className="text-xs text-gray-500 text-center">
-        الصور المسموح بها: JPG, PNG, GIF
-        <br />
-        الحجم الأقصى: 5MB
-      </p>
     </div>
   );
 };
