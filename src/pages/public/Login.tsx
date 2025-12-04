@@ -74,7 +74,7 @@ export default function Login() {
   } = useForm<FormData>({
     resolver: yupResolver(loginSchema),
     defaultValues: {
-      full_name: isDemoMode ? "آلاء وجيه الغفاري" : "",
+      full_name: isDemoMode ? "alaa ghfary" : "",
       password: isDemoMode ? "11" : "",
     },
   });
@@ -84,7 +84,7 @@ export default function Login() {
     const newDemoMode = !isDemoMode;
     setIsDemoMode(newDemoMode);
     if (newDemoMode) {
-      setValue("full_name", "آلاء وجيه الغفاري");
+      setValue("full_name", "alaa ghfary");
       setValue("password", "11");
     } else {
       setValue("full_name", "");
