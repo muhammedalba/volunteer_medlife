@@ -111,7 +111,7 @@ const EvaluationDetails = memo(() => {
         icon: <BookOpen className="h-5 w-5" />,
         color: "text-green-500",
         label: "حالة الدراسة",
-        value: evaluation.supervisor?.study_status,
+        value: evaluation.supervisor?.academic_status,
       },
       {
         icon: <University className="h-5 w-5" />,
@@ -129,7 +129,7 @@ const EvaluationDetails = memo(() => {
         icon: <GraduationCap className="h-5 w-5" />,
         color: "text-yellow-500",
         label: "الدرجة العلمية",
-        value: evaluation.supervisor?.academic_degree,
+        value: evaluation.supervisor?.qualification,
       },
       {
         icon: <Calendar className="h-5 w-5" />,
