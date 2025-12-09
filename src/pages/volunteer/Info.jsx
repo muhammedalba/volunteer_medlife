@@ -29,7 +29,6 @@ export default function Info() {
   const [error, setError] = useState(null);
   const cookies = new Cookies();
 
-
   useEffect(() => {
     const fetchVolunteerData = async () => {
       try {
@@ -37,8 +36,7 @@ export default function Info() {
 
         if (response.volunteer) {
           setVolunteer(response.volunteer);
-          console.log(volunteer,'volunteer info');
-          
+          console.log(volunteer, "volunteer info");
         }
       } catch (err) {
         console.error("Error fetching volunteer data:", err);
@@ -63,7 +61,6 @@ export default function Info() {
           ...response.volunteer,
         }));
       }
-      // حفظ بيانات المستخدم والرمز في الكوكيز
       const expires = new Date();
       expires.setDate(expires.getDate() + 7);
 
@@ -72,15 +69,14 @@ export default function Info() {
         {
           role: response.volunteer.role,
           full_name: response.volunteer.full_name,
-          photo_path:response.volunteer.photo_path,
-          
+          photo_path: response.volunteer.photo_path,
         },
         { path: "/", expires }
       );
       updateVolunteer({
         role: response.volunteer.role,
         full_name: response.volunteer.full_name,
-        photo_path:response.volunteer.photo_path,
+        photo_path: response.volunteer.photo_path,
       });
       return response;
     } catch (error) {
@@ -130,7 +126,7 @@ export default function Info() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">معلومات المتطوع</h1>
+          <h1 className="text-3xl font-bold text-gray-900"> مساحتك الشخصية</h1>
         </div>
 
         {/* Profile Card */}
@@ -151,9 +147,7 @@ export default function Info() {
           {activeTab === "personal" && (
             <PersonalInfoTab volunteer={volunteer} />
           )}
-          {activeTab === "evaluations" && (
-            <EvaluationsTab  />
-          )}
+          {activeTab === "evaluations" && <EvaluationsTab />}
           {activeTab === "ratings" && (
             <RatingsTab
               ratings={volunteer.supervisor_ratings || []}

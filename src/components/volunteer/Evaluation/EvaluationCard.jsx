@@ -124,7 +124,7 @@ const EvaluationCard = memo(({ evaluation }) => {
       },
       {
         icon: <User className="h-5 w-5 text-teal-500" />,
-        label: "المشاركة في الشبكات",
+        label: " اقتراحه للأفكار جديدة والقيام بها:",
         value: evaluation.networking_participation,
         key: "networking",
       },
