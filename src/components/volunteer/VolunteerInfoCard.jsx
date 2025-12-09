@@ -12,8 +12,8 @@ const VolunteerInfoCard = memo(function VolunteerInfoCard({
   title,
   children,
   className = "",
-  bordered = true, // Optional improvement
-  condensed = false, // Optional compact mode
+  bordered = true, 
+  condensed = false, 
 }) {
   const containerClasses = useMemo(
     () => `bg-white rounded-xl shadow-md ${condensed ? "p-4" : "p-6"} ${className}`,

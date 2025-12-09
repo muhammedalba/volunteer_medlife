@@ -12,7 +12,6 @@ import { loginVolunteer } from "../../services/volunteerService.js";
 import { warnNotify, errorNotify, successNotify } from "../../utils/Toast";
 import FormInput from "../../components/volunteer/form/FormInput.tsx";
 
-// تعريف مخطط التحقق من صحة البيانات
 const loginSchema = yup
   .object({
     full_name: yup.string().required("اسم المستخدم مطلوب"),
@@ -31,7 +30,6 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [isDemoMode, setIsDemoMode] = useState(false);
 
   const pageVariants = {
     hidden: { opacity: 0 },
@@ -73,24 +71,8 @@ export default function Login() {
     setValue,
   } = useForm<FormData>({
     resolver: yupResolver(loginSchema),
-    defaultValues: {
-      full_name: isDemoMode ? "alaa ghfary" : "",
-      password: isDemoMode ? "11" : "",
-    },
   });
 
-  // Update form values when demo mode changes
-  const toggleDemoMode = () => {
-    const newDemoMode = !isDemoMode;
-    setIsDemoMode(newDemoMode);
-    if (newDemoMode) {
-      setValue("full_name", "alaa ghfary");
-      setValue("password", "11");
-    } else {
-      setValue("full_name", "");
-      setValue("password", "");
-    }
-  };
 
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
@@ -116,7 +98,6 @@ export default function Login() {
           err.response.data.message || "اسم المستخدم أو كلمة المرور غير صحيحة"
         );
         errorNotify(err.response.data.message);
-        console.log(err.response.data);
       } else {
         warnNotify("حدث خطأ في الاتصال بالخادم");
         setError("حدث خطأ في الاتصال بالخادم");
@@ -185,24 +166,6 @@ export default function Login() {
         )}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          {/* Demo Mode Toggle */}
-          <Motion.div
-            className="flex items-center justify-center"
-            variants={fieldItemVariants}
-          >
-            <label className="flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={isDemoMode}
-                onChange={toggleDemoMode}
-                className="ml-2 w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500"
-              />
-              <span className="text-sm text-gray-600">
-                وضع التجريب (تعبئة تلقائية)
-              </span>
-            </label>
-          </Motion.div>
-
           <Motion.div
             className="space-y-4"
             variants={fieldsContainerVariants}
