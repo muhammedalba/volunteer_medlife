@@ -49,23 +49,6 @@ const EvaluationCard = memo(({ evaluation }) => {
     return Math.max(0, Math.min(5, numeric));
   }, []);
 
-  const getIdeasDescription = useCallback((value) => {
-    const num = Math.round(Number(value));
-    switch (num) {
-      case 1:
-        return "ضعيفة جداً";
-      case 2:
-        return "ضعيفة";
-      case 3:
-        return "جيدة";
-      case 4:
-        return "جيدة جداً";
-      case 5:
-        return "رائعة";
-      default:
-        return "غير محدد";
-    }
-  }, []);
 
   const renderStars = useCallback(
     (score) => {
@@ -121,12 +104,47 @@ const EvaluationCard = memo(({ evaluation }) => {
         value: evaluation.activity_score,
         key: "activity",
       },
+      {
+        icon: <Award className="h-5 w-5 text-orange-500" />,
+        label: "تقييم الالتزام",
+        value: evaluation.commitment_score,
+        key: "commitment",
+      },
+      {
+        icon: <Star className="h-5 w-5 text-pink-500" />,
+        label: "تقييم الإبداع",
+        value: evaluation.creativity_score,
+        key: "creativity",
+      },
+      {
+        icon: <Calendar className="h-5 w-5 text-indigo-500" />,
+        label: "حضور الاجتماعات",
+        value: evaluation.meetings_attendance,
+        key: "meetings",
+      },
+      {
+        icon: <User className="h-5 w-5 text-teal-500" />,
+        label: "المشاركة في الشبكات",
+        value: evaluation.networking_participation,
+        key: "networking",
+      },
+      {
+        icon: <Info className="h-5 w-5 text-cyan-500" />,
+        label: "تقييم الأفكار الجديدة",
+        value: evaluation.new_ideas_score,
+        key: "newIdeas",
+      },
     ],
     [
       evaluation.initial_score,
       evaluation.monthly_score,
       evaluation.posts_score,
       evaluation.activity_score,
+      evaluation.commitment_score,
+      evaluation.creativity_score,
+      evaluation.meetings_attendance,
+      evaluation.networking_participation,
+      evaluation.new_ideas_score,
     ]
   );
 
@@ -219,7 +237,7 @@ const EvaluationCard = memo(({ evaluation }) => {
             variants={container}
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
           >
             {scoreItems.map((item) => (
               <_motion.div
@@ -249,18 +267,6 @@ const EvaluationCard = memo(({ evaluation }) => {
             transition={{ delay: 0.4 }}
             className="space-y-4"
           >
-            {evaluation.supervisor_opinion && (
-              <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
-                <div className="flex items-center text-blue-600 mb-2">
-                  <Info className="ml-1 h-4 w-4" />
-                  <span className="text-sm font-medium">رأي المشرف</span>
-                </div>
-                <p className="text-gray-700 text-sm">
-                  {evaluation.supervisor_opinion}
-                </p>
-              </div>
-            )}
-
             {evaluation.negatives_notes && (
               <div className="bg-amber-50/50 p-4 rounded-xl border border-amber-100">
                 <div className="flex items-center text-amber-600 mb-2">
@@ -282,7 +288,31 @@ const EvaluationCard = memo(({ evaluation }) => {
                   </span>
                 </div>
                 <p className="text-gray-700 text-sm">
-                  {getIdeasDescription(evaluation.ideas_presented)}
+                 { evaluation.ideas_presented}
+                 
+                </p>
+              </div>
+            )}
+
+            {evaluation.supervisor?.full_name && (
+              <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                <div className="flex items-center text-gray-800 mb-2">
+                  <User className="ml-1 h-4 w-4 text-bgColor" />
+                  <span className="font-medium"> اسم المشرف</span>
+                </div>
+                <p className="text-gray-700 text-sm">
+                  {evaluation.supervisor?.full_name}
+                </p>
+              </div>
+            )}
+            {evaluation.supervisor_opinion && (
+              <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                <div className="flex items-center text-blue-600 mb-2">
+                  <Info className="ml-1 h-4 w-4" />
+                  <span className="text-sm font-medium">رأي المشرف</span>
+                </div>
+                <p className="text-gray-700 text-sm">
+                  {evaluation.supervisor_opinion}
                 </p>
               </div>
             )}

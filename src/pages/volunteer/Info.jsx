@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
 import { EditVolunteerModal, tabs } from "@/components/volunteer";
 import Preloader from "@/components/Preloader/Preloader";
 import {
@@ -132,9 +131,6 @@ export default function Info() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">معلومات المتطوع</h1>
-          <p className="mt-2 text-lg text-gray-600">
-            View and manage volunteer details and activities
-          </p>
         </div>
 
         {/* Profile Card */}

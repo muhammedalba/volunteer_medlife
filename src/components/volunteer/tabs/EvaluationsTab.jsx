@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { getEvaluations } from "@/services/volunteerService";
 import EvaluationCard from "../Evaluation/EvaluationCard";
 import Preloader from "../../../components/Preloader/Preloader";
@@ -9,7 +8,7 @@ const EvaluationsTab = () => {
   const [evaluations, setEvaluations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchEvaluations = async () => {
@@ -28,9 +27,7 @@ const EvaluationsTab = () => {
     fetchEvaluations();
   }, []);
 
-  const handleViewDetails = (evaluationId) => {
-    navigate(`/volunteer/evaluations/${evaluationId}`);
-  };
+
 
   if (isLoading) {
     return <Preloader />;
@@ -50,8 +47,8 @@ const EvaluationsTab = () => {
         evaluations.map((evaluation) => (
           <div
             key={evaluation.id}
-            onClick={() => handleViewDetails(evaluation.id)}
-            className="cursor-pointer hover:shadow-lg transition-shadow duration-300"
+    
+            className="hover:shadow-lg transition-shadow duration-300"
           >
             <EvaluationCard evaluation={evaluation} />
           </div>

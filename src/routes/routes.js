@@ -24,9 +24,4 @@ export const volunteerRoutes = [
     element: "Info",
     isPublic: true,
   },
-  {
-    path: "/volunteer/evaluations/:id",
-    element: "EvaluationDetails",
-    isPublic: false,
-  },
 ];

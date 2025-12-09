@@ -16,7 +16,6 @@ import Header from "./components/Header";
 import Footer from "./components/Footer/Footer";
 // /volunteer
 import Info from "./pages/volunteer/Info";
-import EvaluationDetails from "./pages/volunteer/EvaluationDetails";
 import { ToastContainer } from "react-toastify";
 // Component mapping
 const componentMap = {
@@ -24,7 +23,6 @@ const componentMap = {
   Login,
   NotFound,
   Info,
-  EvaluationDetails,
 };
 
 // Protected Route Component
